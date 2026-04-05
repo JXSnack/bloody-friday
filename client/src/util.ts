@@ -28,6 +28,9 @@ export type Box = {width: number, height: number, depth: number}
 class GameInstance {
     public keys: Record<string, boolean> = {};
     public networking: NetworkingData = new NetworkingData();
+
+    public self: Player | null = null;
+    public frictionMultiplier: Vec = new Vec(0.8, 0.8, 0.8);
 }
 
 export const Game: GameInstance = new GameInstance();
