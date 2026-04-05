@@ -75,6 +75,7 @@ export abstract class Entity {
 
     remove() {
         Game.world?.physics.destroy(this.mesh);
-        this.mesh.remove()
+        Game.world?.destroy(this.mesh);
+        this.mesh.remove();
     }
 }
