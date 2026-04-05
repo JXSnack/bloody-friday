@@ -1,4 +1,4 @@
-import {Box, Vec, VEC_ZERO} from "../util";
+import {Box, Game, Vec} from "../util";
 import {ExtendedMesh, Scene3D} from "enable3d";
 
 export abstract class Entity {
@@ -20,5 +20,8 @@ export abstract class Entity {
     public mesh!: ExtendedMesh;
 
     create() {}
-    update() {}
+    update() {
+        this.vel = this.vel.withMul(Game.frictionMultiplier)
+        this.pos = this.pos.withAdd(this.vel)
+    }
 }
