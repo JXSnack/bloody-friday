@@ -37,7 +37,13 @@ wss.on('connection', (ws) => {
         console.log("client disconnected")
         
         if (!authed) return;
-        authedClients.splice(authedClients.indexOf(self), 1)
+        authedClients.splice(authedClients.indexOf(self), 1);
+        
+        wss.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify({"sender": "server", "type": "disconnect", "uuid": self.uuid}))
+            }
+        })
     })
 })
 
