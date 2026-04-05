@@ -1,9 +1,29 @@
 import {NetworkingData} from "./networking/main";
+import {Player} from "./entity/player";
 
-export type Vec = {x: number, y: number, z: number};
+export class Vec {
+    constructor(public x: number, public y: number, public z: number) {}
+
+    withAdd(other: Vec): Vec {
+        return new Vec(this.x + other.x, this.y + other.y, this.z + other.z);
+    }
+
+    withSub(other: Vec): Vec {
+        return new Vec(this.x - other.x, this.y - other.y, this.z - other.z);
+    }
+
+    withMul(other: Vec): Vec {
+        return new Vec(this.x * other.x, this.y * other.y, this.z * other.z);
+    }
+
+    withDiv(other: Vec): Vec {
+        return new Vec(this.x / other.x, this.y / other.y, this.z / other.z);
+    }
+
+    static ZERO = new Vec(0, 0, 0);
+}
+
 export type Box = {width: number, height: number, depth: number}
-
-export const VEC_ZERO: Vec = {x: 0, y: 0, z: 0}
 
 class GameInstance {
     public keys: Record<string, boolean> = {};

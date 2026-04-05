@@ -12,8 +12,8 @@ export abstract class Entity {
 
     public scene: Scene3D;
 
-    public pos: Vec = VEC_ZERO;
-    public vel: Vec = VEC_ZERO;
+    public pos: Vec = Vec.ZERO;
+    public vel: Vec = Vec.ZERO;
     public hitboxSize: Box = {width: 1, height: 1, depth: 1};
     public mass: number = 1;
 
