@@ -1,6 +1,6 @@
 export class NetworkingData {
     public readonly clientId = crypto.randomUUID();
-    public readonly socket = new WebSocket("wss://localhost:8080")
+    public readonly socket = new WebSocket("ws://localhost:8080")
 
     init() {
         this.socket.onopen = () => this.onSocketOpen();
