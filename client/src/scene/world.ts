@@ -1,6 +1,7 @@
 import { Scene3D } from "enable3d";
 import {Entity} from "../entity/entity";
 import {Player} from "../entity/player"
+import {Game} from "../util";
 
 export class MainScene extends Scene3D {
     private entities: Entity[] = [];
@@ -12,7 +13,8 @@ export class MainScene extends Scene3D {
     async create() {
         await this.warpSpeed("-ground", "-orbitControls");
 
-        this.addEntity(new Player(this));
+        Game.self = new Player(this);
+        this.addEntity(Game.self);
 
         this.camera.position.set(0, 10, 15);
         this.camera.lookAt(0, 0, 0);
