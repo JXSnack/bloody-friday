@@ -12,11 +12,14 @@ export class MainScene extends Scene3D {
     }
 
     async create() {
+        Game.world = this;
+
         await this.warpSpeed("-ground", "-orbitControls");
 
         this.physics.add.ground({mass: 0, width: 10, height: 10});
 
         Game.self = new Player(this);
+        Game.self.uuid = Game.networking.clientId;
         this.addEntity(Game.self);
 
         this.camera.position.set(0, 10, 15);
@@ -47,5 +50,13 @@ export class MainScene extends Scene3D {
 
     getEntity(uuid: string): Entity | null {
         return this.entities[uuid];
+    }
+
+    removeEntity(uuid: string) {
+        let entity = this.getEntity(uuid);
+        if (entity == null) return;
+
+        entity.remove();
+        delete this.entities[uuid];
     }
 }

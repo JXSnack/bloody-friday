@@ -1,6 +1,7 @@
 import {NetworkingData} from "./networking/main";
 import {Player} from "./entity/player";
 import {Vector3} from "three";
+import {MainScene} from "./scene/world";
 
 export class Vec {
     constructor(public x: number, public y: number, public z: number) {}
@@ -34,6 +35,7 @@ class GameInstance {
     public networking: NetworkingData = new NetworkingData();
 
     public self: Player | null = null;
+    public world: MainScene | null = null;
 
     doUpdate() {
         if (this.self == null) return;

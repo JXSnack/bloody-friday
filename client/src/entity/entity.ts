@@ -3,7 +3,7 @@ import {ExtendedMesh, Scene3D} from "enable3d";
 
 export abstract class Entity {
     public readonly typeId: string;
-    public readonly uuid = crypto.randomUUID();
+    public uuid = crypto.randomUUID();
 
     constructor(typeId: string, scene: Scene3D) {
         this.typeId = typeId;
@@ -59,5 +59,10 @@ export abstract class Entity {
         if (this.mesh == null) return;
 
         Game.networking.send(this.uuid, {"type": "update", "pos": JSON.stringify(this.getPos())});
+    }
+
+    remove() {
+        Game.world?.physics.destroy(this.mesh);
+        this.mesh.remove()
     }
 }

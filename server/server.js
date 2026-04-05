@@ -22,6 +22,7 @@ wss.on('connection', (ws) => {
             authedClients.push(self);
             authed = true;
             console.log("authed " + JSON.stringify(self));
+            console.log(authedClients)
             return;
         }
         
