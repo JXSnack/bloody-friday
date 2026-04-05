@@ -35,11 +35,15 @@ export class NetworkingData {
                 // @ts-ignore
                 entity.uuid = sender;
                 Game.world.addEntity(entity);
+
+                entity.mesh.body.setCollisionFlags(2); // CF_KINEMATIC_OBJECT
+                entity.mesh.body.setVelocity(0, 0, 0);
+                entity.mesh.body.setAngularVelocity(0, 0, 0);
             }
 
             let posJSON = JSON.parse(data["pos"]);
             let pos = new Vec(posJSON.x, posJSON.y, posJSON.z);
-            entity.setPos(pos);
+            entity.targetPos = pos;
         }
     }
 
