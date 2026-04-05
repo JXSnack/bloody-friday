@@ -53,4 +53,11 @@ export abstract class Entity {
     isColliding(): boolean {
         return this.collisions > 0;
     }
+
+    broadcast() {
+        if (Game.self == null) return;
+        if (this.mesh == null) return;
+
+        Game.networking.send(this.uuid, {"type": "update", "pos": JSON.stringify(this.getPos())});
+    }
 }

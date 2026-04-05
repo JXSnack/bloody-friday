@@ -5,7 +5,7 @@ import {Game} from "../util";
 import {PerspectiveCamera} from "three";
 
 export class MainScene extends Scene3D {
-    private entities: Entity[] = [];
+    private entities: Record<string, Entity> = {};
 
     constructor() {
         super({ key: "MainScene" } );
@@ -31,7 +31,7 @@ export class MainScene extends Scene3D {
     }
 
     update() {
-        for (let entity of this.entities) {
+        for (const [id, entity] of Object.entries(this.entities)) {
             entity.update();
         }
 
@@ -40,8 +40,12 @@ export class MainScene extends Scene3D {
     }
 
     addEntity(entity: Entity) {
-        this.entities.push(entity);
+        this.entities[entity.uuid] = entity;
         entity.create();
         entity.initMeshStuff();
+    }
+
+    getEntity(uuid: string): Entity | null {
+        return this.entities[uuid];
     }
 }

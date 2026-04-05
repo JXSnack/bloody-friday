@@ -17,17 +17,16 @@ wss.on('connection', (ws) => {
     let self = null;
     
     ws.on('message', (message) => {
-        let msg = message.toString();
-
         if (!authed) {
-            self = new Client(msg, new Date());
+            self = new Client(message.toString(), new Date());
             authedClients.push(self);
             authed = true;
-            console.log("authed");
+            console.log("authed " + JSON.stringify(self));
             return;
         }
         
         wss.clients.forEach((client) => {
+            let msg = message.toString();
             if (client.readyState === WebSocket.OPEN) {
                 client.send(msg);
             }

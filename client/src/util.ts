@@ -34,6 +34,11 @@ class GameInstance {
     public networking: NetworkingData = new NetworkingData();
 
     public self: Player | null = null;
+
+    doUpdate() {
+        if (this.self == null) return;
+        this.self.broadcast();
+    }
 }
 
 export const Game: GameInstance = new GameInstance();

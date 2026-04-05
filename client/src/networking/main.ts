@@ -1,3 +1,5 @@
+import {Game} from "../util";
+
 export class NetworkingData {
     public readonly clientId = crypto.randomUUID();
     public readonly socket = new WebSocket("ws://localhost:8080")
@@ -9,17 +11,22 @@ export class NetworkingData {
 
     onSocketOpen() {
         console.log("authorizing...");
-        this.send(this.clientId);
+        this.socket.send(this.clientId);
     }
 
     onSocketMessage(event: MessageEvent) {
-        console.log("Received packet")
+        console.log("Received packet");
 
-        const data = JSON.parse(event.data)
-        console.log(data)
+        const data = JSON.parse(event.data);
+
+        if (Game.self == null) return;
+        if (data["sender"] == Game.self.uuid) return;
+
+        console.log(data);
     }
 
-    send(message: any) {
-        this.socket.send(message)
+    send(sender: string, message: any) {
+        message["sender"] = sender;
+        this.socket.send(JSON.stringify(message))
     }
 }
