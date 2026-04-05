@@ -1,5 +1,6 @@
 import {NetworkingData} from "./networking/main";
 import {Player} from "./entity/player";
+import {Vector3} from "three";
 
 export class Vec {
     constructor(public x: number, public y: number, public z: number) {}
@@ -21,6 +22,9 @@ export class Vec {
     }
 
     static ZERO = new Vec(0, 0, 0);
+    static from = (vector: Vector3): Vec => {
+        return new Vec(vector.x, vector.y, vector.z);
+    }
 }
 
 export type Box = {width: number, height: number, depth: number}
@@ -30,7 +34,6 @@ class GameInstance {
     public networking: NetworkingData = new NetworkingData();
 
     public self: Player | null = null;
-    public frictionMultiplier: Vec = new Vec(0.8, 0.8, 0.8);
 }
 
 export const Game: GameInstance = new GameInstance();
