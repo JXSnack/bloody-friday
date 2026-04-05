@@ -11,6 +11,7 @@ export abstract class Entity {
     }
 
     public scene: Scene3D;
+    public collisions: number = 0;
 
     public pos: Vec = Vec.ZERO;
     public vel: Vec = Vec.ZERO;
@@ -20,8 +21,19 @@ export abstract class Entity {
     public mesh!: ExtendedMesh;
 
     create() {}
+    initMeshStuff() {
+        this.mesh.body.on.collision((other, event) => {
+            if (event == "start") this.collisions++;
+            else if (event == "end") this.collisions--;
+        })
+    }
+
     update() {
         this.vel = this.vel.withMul(Game.frictionMultiplier)
         this.pos = this.pos.withAdd(this.vel)
+    }
+
+    isColliding(): boolean {
+        return this.collisions > 0;
     }
 }
