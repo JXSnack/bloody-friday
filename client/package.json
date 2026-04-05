@@ -14,5 +14,10 @@
   "devDependencies": {
     "typescript": "^6.0.2",
     "vite": "^6.4.1"
+  },
+  "dependencies": {
+    "enable3d": "^0.26.1",
+    "phaser": "^3.90.0",
+    "three": "^0.171.0"
   }
 }
