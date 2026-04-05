@@ -8,7 +8,8 @@ export class NetworkingData {
     }
 
     onSocketOpen() {
-        console.log("connected");
+        console.log("authorizing...");
+        this.send(this.clientId);
     }
 
     onSocketMessage(event: MessageEvent) {
