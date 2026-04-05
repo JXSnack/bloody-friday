@@ -1,14 +1,12 @@
 {
     "compilerOptions": {
         "target": "ESNext",
-        "module": "ESNext",
-        "moduleResolution": "Bundler",
+        "module": "CommonJS",
+        "moduleResolution": "node",
         "strict": true,
         "skipLibCheck": true,
         "esModuleInterop": true,
-        "lib": [
-            "ESNext",
-            "DOM"
-        ]
+        "lib": ["ESNext", "DOM"],
+        "ignoreDeprecations": "6.0"
     }
 }
