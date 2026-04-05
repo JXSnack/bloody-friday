@@ -1,6 +1,3 @@
-import {WebSocket} from "vite";
-import MessageEvent = WebSocket.MessageEvent;
-
 export class NetworkingData {
     public readonly clientId = crypto.randomUUID();
     public readonly socket = new WebSocket("wss://localhost:8080")
@@ -19,5 +16,9 @@ export class NetworkingData {
 
         const data = JSON.parse(event.data)
         console.log(data)
+    }
+
+    send(message: any) {
+        this.socket.send(message)
     }
 }
