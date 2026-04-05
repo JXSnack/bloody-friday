@@ -13,21 +13,26 @@ export class MainScene extends Scene3D {
     async create() {
         await this.warpSpeed("-ground", "-orbitControls");
 
+        this.physics.add.ground({mass: 0, width: 10, height: 10});
+
         Game.self = new Player(this);
         this.addEntity(Game.self);
 
         this.camera.position.set(0, 10, 15);
-        this.camera.lookAt(0, 0, 0);
     }
 
     update() {
         for (let entity of this.entities) {
             entity.update();
         }
+
+        // @ts-ignore
+        this.camera.lookAt(Game.self.getPos().x, Game.self.getPos().y, Game.self.getPos().z);
     }
 
     addEntity(entity: Entity) {
         this.entities.push(entity);
         entity.create();
+        entity.initMeshStuff();
     }
 }
