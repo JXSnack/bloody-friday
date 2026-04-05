@@ -13,7 +13,6 @@ export abstract class Entity {
     public scene: Scene3D;
     public collisions: number = 0;
 
-    public pos: Vec = Vec.ZERO;
     public vel: Vec = Vec.ZERO;
     public hitboxSize: Box = {width: 1, height: 1, depth: 1};
     public mass: number = 1;
@@ -29,8 +28,26 @@ export abstract class Entity {
     }
 
     update() {
-        this.vel = this.vel.withMul(Game.frictionMultiplier)
-        this.pos = this.pos.withAdd(this.vel)
+        if (this.mesh == null) return;
+        const vy = this.mesh.body.velocity.y; // gravity
+
+        this.mesh.body.setVelocity(
+            this.vel.x,
+            vy + this.vel.y,
+            this.vel.z
+        );
+
+        this.vel = Vec.ZERO;
+    }
+
+    setPos(pos: Vec) {
+        if (this.mesh == null) return;
+        this.mesh.body.setPosition(pos.x, pos.y, pos.z);
+    }
+
+    getPos(): Vec {
+        if (this.mesh == null) return Vec.ZERO;
+        return new Vec(this.mesh.body.position.x, this.mesh.body.position.y, this.mesh.body.position.z);
     }
 
     isColliding(): boolean {
