@@ -69,7 +69,7 @@ export class Player extends Entity {
             ? current.z + (moveZ - current.z) * accel
             : current.z * (1 - friction);
 
-        this.vel = new Vec(finalVX, 0, finalVZ);
+        this.vel = new Vec(finalVX, this.vel.y, finalVZ);
 
         if (Game.keys["Space"] && this.isColliding()) {
             this.mesh.body.setVelocityY(6);

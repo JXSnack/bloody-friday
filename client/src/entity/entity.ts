@@ -24,6 +24,7 @@ export abstract class Entity {
     public mesh!: ExtendedMesh;
 
     create() {}
+
     initMeshStuff() {
         this.mesh.body.on.collision((other, event) => {
             if (event == "start") this.collisions++;
@@ -36,10 +37,14 @@ export abstract class Entity {
 
         if (this.remote && this.targetPos != null) this.updateLerpedRemotePos();
         else if (!this.remote) {
-            // existing local physics...
             const vy = this.mesh.body.velocity.y;
             this.mesh.body.setVelocity(this.vel.x, vy + this.vel.y, this.vel.z);
             this.vel = Vec.ZERO;
+        }
+
+        if (!this.remote && this.getPos().y < -1) {
+            this.vel = this.vel.withAdd(new Vec(0, 2, 0))
+            return;
         }
     }
 
@@ -69,7 +74,7 @@ export abstract class Entity {
 
     getPos(): Vec {
         if (this.mesh == null) return Vec.ZERO;
-        return new Vec(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z);
+        return Vec.from(this.mesh.position);
     }
 
     isColliding(): boolean {

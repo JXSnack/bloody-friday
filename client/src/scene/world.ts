@@ -58,7 +58,7 @@ export class MainScene extends Scene3D {
         this.mouseY = 0;
 
         for (const [, entity] of Object.entries(this.entities)) {
-            entity.update(); // player camera sync happens in here
+            entity.update();
         }
 
         // apply eye height AFTER controls update, AFTER entity update
