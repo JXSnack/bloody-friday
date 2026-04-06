@@ -5,6 +5,7 @@ import {Game} from "../util";
 import {OrthographicCamera, PerspectiveCamera} from "three";
 import {UIInterface} from "../hud/main";
 import {DevOverlay} from "../hud/devOverlay";
+import {BarsOverlay} from "../hud/bars";
 
 export class MainScene extends Scene3D {
     private entities: Record<string, Entity> = {};
@@ -34,6 +35,7 @@ export class MainScene extends Scene3D {
         FLAT.initEvents(this)
         this.deconstructor.add(FLAT)
 
+        this.addUI(new BarsOverlay())
         this.addUI(new DevOverlay());
 
         this.controls = new FirstPersonControls(this.camera, Game.self.mesh, {
