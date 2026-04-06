@@ -94,7 +94,7 @@ export class BarsOverlay extends UIInterface {
         ctx.font = "18px monospace";
         ctx.fillStyle = "white";
         let textX = offset * 2;
-        if (!left) textX = barWidth - textX * 2;
+        if (!left) textX = barWidth - ctx.measureText(points.toString()).width;
         ctx.fillText(points.toString(), x + textX, this.pbHeight / 2 + 6);
     }
 
