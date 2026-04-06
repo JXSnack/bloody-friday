@@ -1,4 +1,4 @@
-import { Scene3D } from "enable3d";
+import {FirstPersonControls, Scene3D} from "enable3d";
 import {Entity} from "../entity/entity";
 import {Player} from "../entity/player"
 import {Game} from "../util";
@@ -6,6 +6,10 @@ import {PerspectiveCamera} from "three";
 
 export class MainScene extends Scene3D {
     private entities: Record<string, Entity> = {};
+    private controls!: FirstPersonControls;
+
+    private mouseX: number = 0;
+    private mouseY: number = 0;
 
     constructor() {
         super({ key: "MainScene" } );
@@ -22,7 +26,21 @@ export class MainScene extends Scene3D {
         Game.self.uuid = Game.networking.clientId;
         this.addEntity(Game.self);
 
-        this.camera.position.set(0, 10, 15);
+
+        this.controls = new FirstPersonControls(this.camera, Game.self.mesh, {
+            pointerLock: true
+        });
+
+        document.addEventListener("click", () => {
+            document.body.requestPointerLock();
+        });
+
+        // Feed mouse deltas to controls
+        document.addEventListener("mousemove", (e) => {
+            if (document.pointerLockElement !== document.body) return;
+            this.mouseX = e.movementX;
+            this.mouseY = e.movementY;
+        });
 
         window.onresize = () => {
             this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -34,12 +52,20 @@ export class MainScene extends Scene3D {
     }
 
     update() {
-        for (const [id, entity] of Object.entries(this.entities)) {
-            entity.update();
+        // mouse deltas
+        this.controls?.update(this.mouseX, this.mouseY);
+        this.mouseX = 0;
+        this.mouseY = 0;
+
+        for (const [, entity] of Object.entries(this.entities)) {
+            entity.update(); // player camera sync happens in here
         }
 
-        // @ts-ignore
-        this.camera.lookAt(Game.self.getPos().x, Game.self.getPos().y, Game.self.getPos().z);
+        // apply eye height AFTER controls update, AFTER entity update
+        if (Game.self?.mesh) {
+            const pos = Game.self.getPos();
+            Game.world!.camera.position.set(pos.x, pos.y + 1, pos.z);
+        }
     }
 
     addEntity(entity: Entity) {

@@ -52,7 +52,6 @@ export abstract class Entity {
 
     setPos(pos: Vec) {
         if (this.mesh == null) return;
-        this.mesh.body.setPosition(pos.x, pos.y, pos.z);
         this.mesh.position.set(pos.x, pos.y, pos.z);
         this.mesh.body.needUpdate = true;
     }
