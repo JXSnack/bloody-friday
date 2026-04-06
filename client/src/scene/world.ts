@@ -82,7 +82,7 @@ export class MainScene extends Scene3D {
         let entity = this.getEntity(uuid);
         if (entity == null) return;
 
-        entity.remove();
+        entity.removeMesh();
         delete this.entities[uuid];
     }
 }

@@ -83,7 +83,7 @@ export abstract class Entity {
         Game.networking.send(this.uuid, {"type": "update", "pos": this.getPos()});
     }
 
-    remove() {
+    removeMesh() {
         Game.world?.physics.destroy(this.mesh);
         Game.world?.destroy(this.mesh);
         this.mesh.remove();
