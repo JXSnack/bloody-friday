@@ -1,4 +1,4 @@
-import {Game, Vec} from "../util";
+import {Game, Team, Vec} from "../util";
 import {updatePlayer} from "./updatePlayer";
 
 export class NetworkingData {
@@ -34,6 +34,8 @@ export class NetworkingData {
     onServerMessage(data: any) {
         if (data["type"] == "disconnect") {
             Game.world?.removeEntity(data["uuid"]);
+        } else if (data["type"] == "team") {
+            Game.team = data["teamId"];
         }
     }
 

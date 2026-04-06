@@ -4,6 +4,11 @@ import {Vector3} from "three";
 import {MainScene} from "./scene/world";
 import {FLAT} from "enable3d";
 
+export enum Team {
+    NATIONALIST,
+    LOYALIST
+}
+
 export class Vec {
     constructor(public x: number, public y: number, public z: number) {}
 
@@ -41,6 +46,7 @@ class GameInstance {
 
     public loyalistPoints: number = 0;
     public nationalistPoints: number = 0;
+    public team?: Team;
 
     doUpdate() {
         if (this.self == null) return;
