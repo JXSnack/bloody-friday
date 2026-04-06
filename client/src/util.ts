@@ -39,8 +39,8 @@ class GameInstance {
     public world: MainScene | null = null;
     public hud: FLAT.FlatArea | null = null;
 
-    public loyalistPoints: number = 166;
-    public nationalistPoints: number = 53;
+    public loyalistPoints: number = 0;
+    public nationalistPoints: number = 0;
 
     doUpdate() {
         if (this.self == null) return;
