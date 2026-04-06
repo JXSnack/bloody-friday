@@ -1,6 +1,6 @@
 import {Entity} from "./entity";
 import {FirstPersonControls, Scene3D} from "enable3d";
-import {Game, Vec} from "../util";
+import {debug, Game, Vec} from "../util";
 import {Vector3} from "three";
 
 export class Player extends Entity {
@@ -10,6 +10,7 @@ export class Player extends Entity {
 
     constructor(scene: Scene3D) {
         super("player", scene);
+        this.mass = 2;
     }
 
     create() {
@@ -85,7 +86,7 @@ export class Player extends Entity {
         this.vel = new Vec(finalVX, this.vel.y, finalVZ);
 
         if (Game.keys["Space"] && this.isColliding()) {
-            this.mesh.body.setVelocityY(6);
+            this.mesh.body.setVelocityY(6 * (1 / this.mass));
         }
     }
 }
