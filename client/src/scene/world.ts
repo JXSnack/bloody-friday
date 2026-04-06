@@ -1,11 +1,15 @@
-import {FirstPersonControls, Scene3D} from "enable3d";
+import {FirstPersonControls, FLAT, Scene3D} from "enable3d";
 import {Entity} from "../entity/entity";
 import {Player} from "../entity/player"
 import {Game} from "../util";
-import {PerspectiveCamera} from "three";
+import {OrthographicCamera, PerspectiveCamera} from "three";
+import {UIInterface} from "../hud/main";
+import {DevOverlay} from "../hud/devOverlay";
 
 export class MainScene extends Scene3D {
     private entities: Record<string, Entity> = {};
+    private uis: UIInterface[] = [];
+
     private controls!: FirstPersonControls;
 
     private mouseX: number = 0;
@@ -26,6 +30,11 @@ export class MainScene extends Scene3D {
         Game.self.uuid = Game.networking.clientId;
         this.addEntity(Game.self);
 
+        Game.hud = FLAT.init(this.renderer)
+        FLAT.initEvents(this)
+        this.deconstructor.add(FLAT)
+
+        this.addUI(new DevOverlay());
 
         this.controls = new FirstPersonControls(this.camera, Game.self.mesh, {
             pointerLock: true
@@ -52,6 +61,10 @@ export class MainScene extends Scene3D {
     }
 
     update() {
+        for (let ui of Object.values(this.uis)) {
+            ui.update();
+        }
+
         // mouse deltas
         this.controls?.update(this.mouseX, this.mouseY);
         this.mouseX = 0;
@@ -84,5 +97,18 @@ export class MainScene extends Scene3D {
 
         entity.removeMesh();
         delete this.entities[uuid];
+    }
+
+    addUI(ui: UIInterface) {
+        this.uis.push(ui);
+        ui.create();
+    }
+
+    preRender() {
+        FLAT.preRender(this.renderer)
+    }
+
+    postRender() {
+        FLAT.postRender(this.renderer, Game.hud!)
     }
 }
