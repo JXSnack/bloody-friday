@@ -26,8 +26,16 @@ export abstract class Entity {
     create() {}
 
     initMeshStuff() {
-        this.mesh.body.on.collision((other, event) => {
-            if (event == "start") this.collisions++;
+        // @ts-ignore
+        this.mesh.bloodyFridayEntity = this;
+        this.mesh.body.on.collision((other: any, event) => {
+            if (event == "start") {
+                this.collisions++;
+
+                if (other == null) return;
+                if (!other.bloodyFridayEntity) return;
+                this.onCollide(other.bloodyFridayEntity);
+            }
             else if (event == "end") this.collisions--;
         })
     }
@@ -47,6 +55,8 @@ export abstract class Entity {
             return;
         }
     }
+
+    onCollide(other: Entity) {}
 
     private updateLerpedRemotePos() {
         if (this.targetPos == null) return;
