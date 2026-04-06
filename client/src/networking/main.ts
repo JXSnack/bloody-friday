@@ -1,5 +1,6 @@
 import {debug, Game, Team, Vec} from "../util";
 import {updatePlayer} from "./updatePlayer";
+import {Entity} from "../entity/entity";
 
 export class NetworkingData {
     public readonly clientId = crypto.randomUUID();
@@ -26,6 +27,10 @@ export class NetworkingData {
         if (Game.self == null || Game.world == null) return;
 
         if (sender == Game.self.uuid) return;
+        let entity: Entity | null = Game.world.getEntity(sender);
+        if (entity) {
+            entity.lastPing = Date.now();
+        }
 
         let type = data["type"];
         if (type == "update") updatePlayer(sender, data);

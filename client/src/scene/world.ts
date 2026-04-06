@@ -94,6 +94,16 @@ export class MainScene extends Scene3D {
         return this.entities[uuid];
     }
 
+    checkEntityLifetimes() {
+        for (let entity of Object.values(this.entities)) {
+            if (!entity.remote) continue;
+            if (entity.lastPing + 2500 > Date.now()) continue;
+
+            debug("Removed dead entity")
+            this.removeEntity(entity.uuid);
+        }
+    }
+
     removeEntity(uuid: string) {
         let entity = this.getEntity(uuid);
         if (entity == null) return;

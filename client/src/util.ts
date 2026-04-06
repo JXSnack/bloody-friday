@@ -57,6 +57,7 @@ class GameInstance {
     doUpdate() {
         if (this.self == null) return;
         this.self.broadcast();
+        this.world?.checkEntityLifetimes();
     }
 
     private modelCachePromises: Record<string, Promise<GLTF>> = {};

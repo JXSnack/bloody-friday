@@ -1,4 +1,4 @@
-import {Game, Vec} from "../util";
+import {debug, Game, Team, Vec} from "../util";
 import {Player} from "../entity/player";
 
 export function updatePlayer(sender: string, data: any) {
@@ -19,4 +19,19 @@ export function updatePlayer(sender: string, data: any) {
 
     let datPos = data["pos"];
     entity.setPos(new Vec(datPos.x, datPos.y, datPos.z));
+
+    let datTeam: Team = data["team"];
+    if (datTeam != undefined && entity.model == undefined) {
+        debug("setting")
+
+        entity.modelOffset = entity.modelOffset.withAdd(new Vec(0, -1, 0));
+
+        entity.loadModel("/nationalist.glb", () => {
+            entity.model!.scale.set(1, 1, 1);
+            if (Game.self == entity) {
+                entity.model!.visible = false;
+            }
+        });
+    }
+
 }

@@ -12,7 +12,6 @@ export class Player extends Entity {
         super("player", scene);
         this.mass = 2;
         this.hitboxSize = new Vec(0.7, 2, 0.7);
-        this.modelOffset = this.modelOffset.withAdd(new Vec(0, -1, 0))
     }
 
     create() {
@@ -25,13 +24,6 @@ export class Player extends Entity {
 
         // lock camera to player
         this.mesh.visible = false;
-
-        this.loadModel("/player.glb", () => {
-            this.model!.scale.set(0.5, 0.5, 0.5);
-            if (Game.self == this) {
-                this.model!.visible = false;
-            }
-        });
     }
 
     update() {
@@ -95,5 +87,12 @@ export class Player extends Entity {
         if (Game.keys["Space"] && this.isColliding()) {
             this.mesh.body.setVelocityY(6 * (1 / this.mass));
         }
+    }
+
+    makePacket(): any {
+        let packet = super.makePacket();
+
+        if (Game.team != undefined) packet["team"] = Game.team;
+        return packet;
     }
 }

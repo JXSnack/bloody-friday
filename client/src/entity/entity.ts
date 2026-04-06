@@ -6,6 +6,7 @@ import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 export abstract class Entity {
     public readonly typeId: string;
     public uuid = crypto.randomUUID();
+    public lastPing: number = Date.now();
 
     private readonly LERP_FACTOR = 0.2; // tune this (0.1 = smooth, 0.3 = snappier)
 
@@ -26,8 +27,12 @@ export abstract class Entity {
     public mesh!: ExtendedMesh;
     public model?: Group;
     public modelOffset: Vec = Vec.ZERO;
+    private isLoadingModel: boolean = false;
 
     loadModel(path: string, then: () => void) {
+        if (this.isLoadingModel) return;
+        this.isLoadingModel = true;
+
         Game.getOrLoadModel(path).then((model) => {
             this.model = model;
             this.model.scale.set(1, 1, 1);
@@ -39,6 +44,8 @@ export abstract class Entity {
             debug("FAILED to load model check console")
             console.error("Failed to load model:", err);
         });
+
+        this.isLoadingModel = false;
     }
 
     create() {}
@@ -118,7 +125,11 @@ export abstract class Entity {
         if (Game.self == null) return;
         if (this.mesh == null) return;
 
-        Game.networking.send(this.uuid, {"type": "update", "pos": this.getPos()});
+        Game.networking.send(this.uuid, this.makePacket());
+    }
+
+    makePacket(): any {
+        return {"type": "update", "pos": this.getPos()}
     }
 
     removeMesh() {
