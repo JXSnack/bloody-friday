@@ -1,9 +1,10 @@
 import { UIInterface } from "./main";
-import {debug, debugOutput} from "../util";
+import {debug, debugOutput, Game} from "../util";
 import {FLAT} from "enable3d";
 
 export class DevOverlay extends UIInterface {
     private sprite!: FLAT.TextSprite;
+    private visible: boolean = true;
 
     create() {
         const tex = new FLAT.TextTexture("?", {fontSize: 28})
@@ -16,6 +17,14 @@ export class DevOverlay extends UIInterface {
     }
 
     update() {
+        if (Game.keys["AltLeft"] && Game.keys["KeyD"]) {
+            Game.keys["AltLeft"] = false;
+            Game.keys["KeyD"] = false;
+            this.visible = !this.visible;
+        }
+
+        this.sprite.visible = this.visible;
+
         const tex = new FLAT.TextTexture(debugOutput.join("\n"), {fontSize: 28})
         this.sprite.setTexture(tex);
         this.sprite.setScale(1);
