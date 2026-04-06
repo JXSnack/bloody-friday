@@ -34,6 +34,7 @@ export class NetworkingData {
                 entity = new Player(Game.world);
                 // @ts-ignore
                 entity.uuid = sender;
+                entity.remote = true;
                 Game.world.addEntity(entity);
 
                 entity.mesh.body.setCollisionFlags(2); // CF_KINEMATIC_OBJECT
@@ -41,9 +42,8 @@ export class NetworkingData {
                 entity.mesh.body.setAngularVelocity(0, 0, 0);
             }
 
-            let posJSON = JSON.parse(data["pos"]);
-            let pos = new Vec(posJSON.x, posJSON.y, posJSON.z);
-            entity.targetPos = pos;
+            let datPos = data["pos"];
+            entity.setPos(new Vec(datPos.x, datPos.y, datPos.z));
         }
     }
 

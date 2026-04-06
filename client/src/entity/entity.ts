@@ -14,8 +14,9 @@ export abstract class Entity {
 
     public scene: Scene3D;
     public collisions: number = 0;
+    public remote: boolean = false;
 
-    public targetPos: Vec | null = null;
+    private targetPos: Vec | null = null;
     public vel: Vec = Vec.ZERO;
     public hitboxSize: Box = {width: 1, height: 1, depth: 1};
     public mass: number = 1;
@@ -33,27 +34,37 @@ export abstract class Entity {
     update() {
         if (this.mesh == null) return;
 
-        if (this.targetPos != null) {
-            const cur = this.getPos();
-            const lerped = new Vec(
-                cur.x + (this.targetPos.x - cur.x) * this.LERP_FACTOR,
-                cur.y + (this.targetPos.y - cur.y) * this.LERP_FACTOR,
-                cur.z + (this.targetPos.z - cur.z) * this.LERP_FACTOR,
-            );
-            this.setPos(lerped);
-            return; // skip local physics for remote entities
+        if (this.remote && this.targetPos != null) this.updateLerpedRemotePos();
+        else if (!this.remote) {
+            // existing local physics...
+            const vy = this.mesh.body.velocity.y;
+            this.mesh.body.setVelocity(this.vel.x, vy + this.vel.y, this.vel.z);
+            this.vel = Vec.ZERO;
         }
+    }
 
-        // existing local physics...
-        const vy = this.mesh.body.velocity.y;
-        this.mesh.body.setVelocity(this.vel.x, vy + this.vel.y, this.vel.z);
-        this.vel = Vec.ZERO;
+    private updateLerpedRemotePos() {
+        if (this.targetPos == null) return;
+
+        const cur = this.getPos();
+        const lerped = new Vec(
+            cur.x + (this.targetPos.x - cur.x) * this.LERP_FACTOR,
+            cur.y + (this.targetPos.y - cur.y) * this.LERP_FACTOR,
+            cur.z + (this.targetPos.z - cur.z) * this.LERP_FACTOR,
+        );
+
+        this.mesh.position.set(lerped.x, lerped.y, lerped.z);
+        this.mesh.body.needUpdate = true;
     }
 
     setPos(pos: Vec) {
         if (this.mesh == null) return;
-        this.mesh.position.set(pos.x, pos.y, pos.z);
-        this.mesh.body.needUpdate = true;
+
+        if (this.remote) this.targetPos = pos;
+        else {
+            this.mesh.position.set(pos.x, pos.y, pos.z);
+            this.mesh.body.needUpdate = true;
+        }
     }
 
     getPos(): Vec {
@@ -69,7 +80,7 @@ export abstract class Entity {
         if (Game.self == null) return;
         if (this.mesh == null) return;
 
-        Game.networking.send(this.uuid, {"type": "update", "pos": JSON.stringify(this.getPos())});
+        Game.networking.send(this.uuid, {"type": "update", "pos": this.getPos()});
     }
 
     remove() {
