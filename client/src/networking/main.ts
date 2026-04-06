@@ -1,5 +1,5 @@
 import {Game, Vec} from "../util";
-import {Player} from "../entity/player";
+import {updatePlayer} from "./updatePlayer";
 
 export class NetworkingData {
     public readonly clientId = crypto.randomUUID();
@@ -28,23 +28,7 @@ export class NetworkingData {
         if (sender == Game.self.uuid) return;
 
         let type = data["type"];
-        if (type == "update") {
-            let entity = Game.world.getEntity(sender);
-            if (entity == null) {
-                entity = new Player(Game.world);
-                // @ts-ignore
-                entity.uuid = sender;
-                entity.remote = true;
-                Game.world.addEntity(entity);
-
-                entity.mesh.body.setCollisionFlags(2); // CF_KINEMATIC_OBJECT
-                entity.mesh.body.setVelocity(0, 0, 0);
-                entity.mesh.body.setAngularVelocity(0, 0, 0);
-            }
-
-            let datPos = data["pos"];
-            entity.setPos(new Vec(datPos.x, datPos.y, datPos.z));
-        }
+        if (type == "update") updatePlayer(sender, data);
     }
 
     onServerMessage(data: any) {
