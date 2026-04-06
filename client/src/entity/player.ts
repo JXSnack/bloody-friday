@@ -4,6 +4,10 @@ import {Game, Vec} from "../util";
 import {Vector3} from "three";
 
 export class Player extends Entity {
+    public health: number = 20;
+    public maxHealth: number = 20;
+    public isDead: boolean = false;
+
     constructor(scene: Scene3D) {
         super("player", scene);
     }
@@ -25,6 +29,15 @@ export class Player extends Entity {
     update() {
         if (this.mesh == null) return;
         if (Game.self === this) this.handlePlayerControls();
+        if (!this.remote) {
+            if (!this.isDead) {
+                if (this.health <= 0) {
+                    this.health = this.maxHealth;
+                    this.isDead = true;
+                    this.setPos(new Vec(0, 2, 0));
+                }
+            }
+        }
 
         super.update();
     }
