@@ -1,4 +1,4 @@
-import {Game, Team, Vec} from "../util";
+import {debug, Game, Team, Vec} from "../util";
 import {updatePlayer} from "./updatePlayer";
 
 export class NetworkingData {
@@ -18,12 +18,12 @@ export class NetworkingData {
     onSocketMessage(event: MessageEvent) {
         const data = JSON.parse(event.data);
 
-        if (Game.self == null || Game.world == null) return;
         let sender: string = data["sender"];
         if (sender == "server") {
             this.onServerMessage(data);
             return;
         }
+        if (Game.self == null || Game.world == null) return;
 
         if (sender == Game.self.uuid) return;
 
@@ -36,6 +36,7 @@ export class NetworkingData {
             Game.world?.removeEntity(data["uuid"]);
         } else if (data["type"] == "team") {
             Game.team = data["teamId"];
+            debug("Received team " + Game.team)
         }
     }
 

@@ -1,7 +1,7 @@
 import {FirstPersonControls, FLAT, Scene3D} from "enable3d";
 import {Entity} from "../entity/entity";
 import {Player} from "../entity/player"
-import {Game} from "../util";
+import {debug, Game, Vec} from "../util";
 import {OrthographicCamera, PerspectiveCamera} from "three";
 import {UIInterface} from "../hud/main";
 import {DevOverlay} from "../hud/devOverlay";
@@ -39,7 +39,8 @@ export class MainScene extends Scene3D {
         this.addUI(new DevOverlay());
 
         this.controls = new FirstPersonControls(this.camera, Game.self.mesh, {
-            pointerLock: true
+            pointerLock: true,
+            offset: new Vec(0, -4, 0).to3()
         });
 
         document.addEventListener("click", () => {
@@ -79,7 +80,7 @@ export class MainScene extends Scene3D {
         // apply eye height AFTER controls update, AFTER entity update
         if (Game.self?.mesh) {
             const pos = Game.self.getPos();
-            Game.world!.camera.position.set(pos.x, pos.y + 1, pos.z);
+            Game.world!.camera.position.set(pos.x, pos.y + 0.5, pos.z);
         }
     }
 

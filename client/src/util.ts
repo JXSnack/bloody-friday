@@ -1,8 +1,10 @@
 import {NetworkingData} from "./networking/main";
 import {Player} from "./entity/player";
-import {Vector3} from "three";
+import {Group, Vector3} from "three";
 import {MainScene} from "./scene/world";
 import {FLAT} from "enable3d";
+import {GLTF, GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
+import {Entity} from "./entity/entity";
 
 export enum Team {
     NATIONALIST,
@@ -32,6 +34,10 @@ export class Vec {
     static from = (vector: Vector3): Vec => {
         return new Vec(vector.x, vector.y, vector.z);
     }
+
+    to3(): Vector3 {
+        return new Vector3(this.x, this.y, this.z);
+    }
 }
 
 export type Box = {width: number, height: number, depth: number}
@@ -51,6 +57,19 @@ class GameInstance {
     doUpdate() {
         if (this.self == null) return;
         this.self.broadcast();
+    }
+
+    private modelCachePromises: Record<string, Promise<GLTF>> = {};
+
+    async getOrLoadModel(path: string): Promise<Group> {
+        if (!this.modelCachePromises[path]) {
+            this.modelCachePromises[path] = new Promise((resolve, reject) => {
+                new GLTFLoader().load(path, resolve, undefined, reject);
+            });
+        }
+
+        const gltf = await this.modelCachePromises[path];
+        return gltf.scene.clone();
     }
 }
 

@@ -11,20 +11,27 @@ export class Player extends Entity {
     constructor(scene: Scene3D) {
         super("player", scene);
         this.mass = 2;
+        this.hitboxSize = new Vec(0.7, 2, 0.7);
+        this.modelOffset = this.modelOffset.withAdd(new Vec(0, -1, 0))
     }
 
     create() {
         this.mesh = this.scene.physics.add.box(
-            {...new Vec(0, 1, 0), ...this.hitboxSize, mass: this.mass},
+            {...new Vec(0, 1, 0), width: this.hitboxSize.x, height: this.hitboxSize.y, depth: this.hitboxSize.z, mass: this.mass},
             {phong: {color: 0xffffff}}
         );
 
         this.mesh.body.setAngularFactor(0, 0, 0);
 
         // lock camera to player
-        if (Game.self == this && Game.world != null) {
-            this.mesh.visible = false;
-        }
+        this.mesh.visible = false;
+
+        this.loadModel("/player.glb", () => {
+            this.model!.scale.set(0.5, 0.5, 0.5);
+            if (Game.self == this) {
+                this.model!.visible = false;
+            }
+        });
     }
 
     update() {

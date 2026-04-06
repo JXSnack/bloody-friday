@@ -10,6 +10,7 @@ class Client {
 }
 
 const wss = new WebSocket.Server({ port: 8080 })
+let lastTeam = 0;
 
 wss.on('connection', (ws) => {
     console.log("client connected")
@@ -23,6 +24,11 @@ wss.on('connection', (ws) => {
             authed = true;
             console.log("authed " + JSON.stringify(self));
             console.log(authedClients)
+            
+            // set team
+            ws.send(JSON.stringify({"sender": "server", "type": "team", "teamId": lastTeam % 2}))
+            lastTeam++;
+            
             return;
         }
         

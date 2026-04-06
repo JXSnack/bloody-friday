@@ -1,5 +1,7 @@
-import {Box, Game, Vec} from "../util";
-import {ExtendedMesh, Scene3D} from "enable3d";
+import {Box, debug, Game, Vec} from "../util";
+import {ExtendedGroup, ExtendedMesh, Scene3D} from "enable3d";
+import {Group} from "three";
+import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 
 export abstract class Entity {
     public readonly typeId: string;
@@ -18,10 +20,26 @@ export abstract class Entity {
 
     private targetPos: Vec | null = null;
     public vel: Vec = Vec.ZERO;
-    public hitboxSize: Box = {width: 1, height: 1, depth: 1};
+    public hitboxSize: Vec = new Vec(1, 1, 1);
     public mass: number = 1;
 
     public mesh!: ExtendedMesh;
+    public model?: Group;
+    public modelOffset: Vec = Vec.ZERO;
+
+    loadModel(path: string, then: () => void) {
+        Game.getOrLoadModel(path).then((model) => {
+            this.model = model;
+            this.model.scale.set(1, 1, 1);
+            this.model.position.set(this.modelOffset.x, this.modelOffset.y, this.modelOffset.z);
+            this.scene.add.existing(this.model);
+            debug("applied model to " + this.uuid);
+            then();
+        }).catch((err) => {
+            debug("FAILED to load model check console")
+            console.error("Failed to load model:", err);
+        });
+    }
 
     create() {}
 
@@ -42,6 +60,7 @@ export abstract class Entity {
 
     update() {
         if (this.mesh == null) return;
+        let pos = this.getPos();
 
         if (this.remote && this.targetPos != null) this.updateLerpedRemotePos();
         else if (!this.remote) {
@@ -52,7 +71,11 @@ export abstract class Entity {
 
         if (!this.remote && this.getPos().y < -1) {
             this.vel = this.vel.withAdd(new Vec(0, 2, 0))
-            return;
+        }
+
+        if (this.model != null) {
+            let modelPos = pos.withAdd(this.modelOffset);
+            this.model.position.set(modelPos.x, modelPos.y, modelPos.z);
         }
     }
 
