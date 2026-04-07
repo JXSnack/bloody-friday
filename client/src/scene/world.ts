@@ -1,4 +1,4 @@
-import {FirstPersonControls, FLAT, Scene3D} from "enable3d";
+import {ExtendedGroup, FirstPersonControls, FLAT, Scene3D} from "enable3d";
 import {Entity} from "../entity/entity";
 import {Player} from "../entity/player"
 import {debug, Game, Vec} from "../util";
@@ -28,6 +28,16 @@ export class MainScene extends Scene3D {
         await this.warpSpeed("-ground", "-orbitControls");
 
         this.physics.add.ground({mass: 0, width: 10, height: 10});
+
+        let arenaModel = await this.load.gltf("/arena.glb");
+        this.add.existing(arenaModel.scene);
+
+        let arenaCollisions = await this.load.gltf("/arena_collisions.glb");
+
+        this.physics.add.existing(arenaCollisions.scene as ExtendedGroup, {
+            shape: "concave",
+            mass: 0
+        })
 
         Game.self = new Player(this);
         Game.self.uuid = Game.networking.clientId;

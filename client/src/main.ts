@@ -18,3 +18,5 @@ function startGame() {
         Game.doUpdate();
     }, updateLoopMs);
 }
+
+startGame()
