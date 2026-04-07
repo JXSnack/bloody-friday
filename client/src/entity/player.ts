@@ -2,11 +2,17 @@ import {Entity} from "./entity";
 import {FirstPersonControls, Scene3D} from "enable3d";
 import {debug, Game, Vec} from "../util";
 import {Vector3} from "three";
+import {Item} from "../item/main";
+import {Gun} from "../item/gun";
 
 export class Player extends Entity {
     public health: number = 20;
     public maxHealth: number = 20;
     public isDead: boolean = false;
+
+    public gun: Item = new Gun(this);
+
+    public activeItem: Item = this.gun;
 
     constructor(scene: Scene3D) {
         super("player", scene);
@@ -16,7 +22,7 @@ export class Player extends Entity {
 
     create() {
         this.mesh = this.scene.physics.add.box(
-            {...new Vec(0, 1, 0), width: this.hitboxSize.x, height: this.hitboxSize.y, depth: this.hitboxSize.z, mass: this.mass},
+            {...new Vec(Math.random() * 6 - 3, 1, Math.random() * 6 - 3), width: this.hitboxSize.x, height: this.hitboxSize.y, depth: this.hitboxSize.z, mass: this.mass},
             {phong: {color: 0xffffff}}
         );
 
@@ -24,6 +30,8 @@ export class Player extends Entity {
 
         // lock camera to player
         this.mesh.visible = false;
+
+        this.gun.create();
     }
 
     update() {
@@ -38,6 +46,9 @@ export class Player extends Entity {
                 }
             }
         }
+
+        if (this.activeItem.model && !this.activeItem.model.visible) this.activeItem.model.visible = true;
+        this.activeItem.update();
 
         super.update();
     }
@@ -87,6 +98,11 @@ export class Player extends Entity {
         if (Game.keys["Space"] && this.isColliding()) {
             this.mesh.body.setVelocityY(6 * (1 / this.mass));
         }
+    }
+
+    setActiveItem(item: Item) {
+        if (this.activeItem.model) this.activeItem.model.visible = false;
+        this.activeItem = item;
     }
 
     makePacket(): any {
