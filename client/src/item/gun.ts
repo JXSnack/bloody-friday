@@ -29,6 +29,9 @@ export class Gun extends Item {
         const raycaster = new Raycaster(origin.to3(), direction.normalize());
         const hits = raycaster.intersectObjects(Game.world!.scene.children, true);
 
+        Game.sounds.playShoot();
+        Game.self?.applyRecoil(0.15 + Math.random() * 0.1);
+
         for (const hit of hits) {
             let obj: any = hit.object;
 
@@ -40,7 +43,6 @@ export class Gun extends Item {
 
                     let damage = Math.random() * 3;
                     Game.networking.damageEntity(entity.uuid, damage);
-                    Game.sounds.playShoot();
 
                     HitConfirmOverlay.INSTANCE.doHit(20 + Math.round(Math.random() * 100));
 

@@ -14,6 +14,10 @@ export class Player extends Entity {
 
     public activeItem: Item = this.gun;
 
+    // recoil state
+    public recoil = 0;
+    private recoilVelocity = 0;
+
     constructor(scene: Scene3D) {
         super("player", scene);
         this.mass = 2;
@@ -50,6 +54,18 @@ export class Player extends Entity {
 
         if (this.activeItem.model && !this.activeItem.model.visible) this.activeItem.model.visible = true;
         this.activeItem.update();
+
+        // recoil physics (critically damped spring-ish)
+        const stiffness = 0.15;
+        const damping = 0.8;
+
+        this.recoilVelocity -= this.recoil * stiffness;
+        this.recoilVelocity *= damping;
+        this.recoil += this.recoilVelocity;
+        if (Math.abs(this.recoil) < 0.0001) {
+            this.recoil = 0;
+            this.recoilVelocity = 0;
+        }
 
         super.update();
     }
@@ -109,6 +125,11 @@ export class Player extends Entity {
     removeMesh() {
         super.removeMesh();
         this.gun.removeMesh();
+    }
+
+    applyRecoil(amount: number) {
+        // instant kick upward
+        this.recoilVelocity += amount;
     }
 
     makePacket(): any {

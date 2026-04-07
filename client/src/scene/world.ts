@@ -84,7 +84,13 @@ export class MainScene extends Scene3D {
         // apply eye height AFTER controls update, AFTER entity update
         if (Game.self?.mesh) {
             const pos = Game.self.getPos();
-            Game.world!.camera.position.set(pos.x, pos.y + 0.5, pos.z);
+            const recoilOffset = Game.self.recoil;
+
+            Game.world!.camera.position.set(
+                pos.x,
+                pos.y + 0.5 + recoilOffset,
+                pos.z
+            );
         }
     }
 
