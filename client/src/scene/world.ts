@@ -45,6 +45,8 @@ export class MainScene extends Scene3D {
 
         document.addEventListener("click", () => {
             document.body.requestPointerLock();
+
+            Game.self?.activeItem.use();
         });
 
         // Feed mouse deltas to controls
