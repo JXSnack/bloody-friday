@@ -30,6 +30,46 @@ export class Vec {
         return new Vec(this.x / other.x, this.y / other.y, this.z / other.z);
     }
 
+    rotateAround(pivot: Vec, rotation: Vec): Vec {
+        // Translate to origin
+        let x = this.x - pivot.x;
+        let y = this.y - pivot.y;
+        let z = this.z - pivot.z;
+
+        // Rotate X axis
+        const cosX = Math.cos(rotation.x), sinX = Math.sin(rotation.x);
+        const y1 = y * cosX - z * sinX;
+        const z1 = y * sinX + z * cosX;
+
+        // Rotate Y axis
+        const cosY = Math.cos(rotation.y), sinY = Math.sin(rotation.y);
+        const x2 = x * cosY + z1 * sinY;
+        const z2 = -x * sinY + z1 * cosY;
+
+        // Rotate Z axis
+        const cosZ = Math.cos(rotation.z), sinZ = Math.sin(rotation.z);
+        const x3 = x2 * cosZ - y1 * sinZ;
+        const y3 = x2 * sinZ + y1 * cosZ;
+
+        return new Vec(x3 + pivot.x, y3 + pivot.y, z2 + pivot.z);
+    }
+
+    addRotated(offset: Vec, rotation: Vec): Vec {
+        return offset.rotateAround(Vec.ZERO, rotation).withAdd(this);
+    }
+
+    subRotated(offset: Vec, rotation: Vec): Vec {
+        return this.withSub(offset.rotateAround(Vec.ZERO, rotation));
+    }
+
+    mulRotated(offset: Vec, rotation: Vec): Vec {
+        return offset.rotateAround(Vec.ZERO, rotation).withMul(this);
+    }
+
+    divRotated(offset: Vec, rotation: Vec): Vec {
+        return this.withDiv(offset.rotateAround(Vec.ZERO, rotation));
+    }
+
     static ZERO = new Vec(0, 0, 0);
     static from = (vector: Vector3): Vec => {
         return new Vec(vector.x, vector.y, vector.z);
