@@ -42,10 +42,10 @@ export class Gun extends Item {
                 if (obj.bloodyFridayEntity) {
                     const entity: Player = obj.bloodyFridayEntity;
 
-                    let damage = Math.random() * 3;
+                    let damage = 5 + Math.random() * 5;
                     entity.damage(damage);
 
-                    let points = 20 + Math.round(Math.random() * 100);
+                    let points = 20 + Math.round(Math.random() * 30);
                     HitConfirmOverlay.INSTANCE.doHit(points);
                     Game.networking.pointsUpdate(points);
 

@@ -1,6 +1,7 @@
 import {UIInterface} from "./main";
 import {FLAT} from "enable3d";
-import {debug} from "../util";
+import {debug, Game} from "../util";
+import {HitConfirmOverlay} from "./hitConfirm";
 
 export class KillOverlay extends UIInterface {
     static INSTANCE: KillOverlay = new KillOverlay();
@@ -26,6 +27,9 @@ export class KillOverlay extends UIInterface {
             this.sprite = new FLAT.DrawSprite(this.width, this.height, () => {});
             this.addSprite(this.sprite);
         }
+
+        Game.networking.pointsUpdate(120);
+        HitConfirmOverlay.INSTANCE.doHit(120);
     }
 
     update() {

@@ -57,9 +57,9 @@ export class HitConfirmOverlay extends UIInterface {
         }
     }
 
-    // points between 20 - 120
+    // points between 20 - 50
     doHit(points: number) {
-        const multiplier = points / 120;
+        const multiplier = points / 50;
 
         const tex = this.makeTex(points, {});
         const sprite = new FLAT.TextSprite(tex);
@@ -96,7 +96,7 @@ export class HitConfirmOverlay extends UIInterface {
     }
 
     private makeTex(points: number, textStyles: FLAT.TextStyles): FLAT.TextTexture {
-        let multiplier = points / 120;
+        let multiplier = points / 50;
 
         textStyles.fontSize = multiplier * 24 + 28;
         textStyles.fontFamily = "RobotoReg";
@@ -106,7 +106,7 @@ export class HitConfirmOverlay extends UIInterface {
     }
 
     private makeCol(points: number): string {
-        let multiplier = points / 120;
+        let multiplier = points / 50;
 
         let r = multiplier * 255;
         let g = multiplier * 194;
