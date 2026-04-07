@@ -3,9 +3,10 @@ const WebSocket = require('ws')
 const authedClients = []
 
 class Client {
-    constructor(uuid, authDate) {
+    constructor(uuid, authDate, ws) {
         this.uuid = uuid;
         this.authDate = authDate;
+        this.ws = ws;
     }
 }
 
@@ -19,7 +20,7 @@ wss.on('connection', (ws) => {
     
     ws.on('message', (message) => {
         if (!authed) {
-            self = new Client(message.toString(), new Date());
+            self = new Client(message.toString(), new Date(), ws);
             authedClients.push(self);
             authed = true;
             console.log("authed " + JSON.stringify(self));
@@ -32,12 +33,27 @@ wss.on('connection', (ws) => {
             return;
         }
         
-        wss.clients.forEach((client) => {
-            let msg = message.toString();
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(msg);
+        let data = JSON.parse(message.toString());
+        let msgType = data.msgType
+        
+        if (msgType === "broadcast") {
+            wss.clients.forEach((client) => {
+                let msg = message.toString();
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(msg);
+                }
+            })
+        } else if (msgType === "direct") {
+            let target = data.msgDirectTarget;
+            for (let client of authedClients) {
+                if (client.uuid === target) {
+                    client.ws.send(message.toString())
+                    console.log("sent direct message")
+                }
             }
-        })
+        } else {
+            console.log("received incorrect msgType: " + msgType)
+        }
     })
     
     ws.on('close', () => {
