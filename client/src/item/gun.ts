@@ -2,6 +2,7 @@ import {Item} from "./main";
 import {Player} from "../entity/player";
 import {debug, Game, Vec} from "../util";
 import {Raycaster, Vector3} from "three";
+import {HitConfirmOverlay} from "../hud/hitConfirm";
 
 export class Gun extends Item {
     constructor(owner: Player) {
@@ -36,8 +37,13 @@ export class Gun extends Item {
                 if (obj.bloodyFridayEntity) {
                     const entity = obj.bloodyFridayEntity;
                     debug("hit entity", entity.uuid);
-                    Game.networking.damageEntity(entity.uuid, Math.random() * 3);
+
+                    let damage = Math.random() * 3;
+                    Game.networking.damageEntity(entity.uuid, damage);
                     Game.sounds.playShoot();
+
+                    HitConfirmOverlay.INSTANCE.doHit(120);
+
                     return;
                 }
                 obj = obj.parent;

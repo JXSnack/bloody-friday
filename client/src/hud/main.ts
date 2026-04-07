@@ -8,4 +8,8 @@ export class UIInterface {
     addSprite(sprite: Object3D) {
         Game.hud!.scene.add(sprite)
     }
+
+    removeSprite(sprite: Object3D) {
+        Game.hud!.scene.remove(sprite);
+    }
 }
