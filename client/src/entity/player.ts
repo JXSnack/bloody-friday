@@ -1,7 +1,7 @@
 import {Entity} from "./entity";
 import {FirstPersonControls, Scene3D} from "enable3d";
 import {debug, Game, Vec} from "../util";
-import {Vector3} from "three";
+import {Raycaster, Vector3} from "three";
 import {Item} from "../item/main";
 import {Gun} from "../item/gun";
 
@@ -28,8 +28,8 @@ export class Player extends Entity {
     }
 
     create() {
-        this.mesh = this.scene.physics.add.box(
-            {...new Vec(Math.random() * 5 - 3, 20, Math.random() * 5 - 3), width: this.hitboxSize.x, height: this.hitboxSize.y, depth: this.hitboxSize.z, mass: this.mass},
+        this.mesh = this.scene.physics.add.capsule(
+            {...new Vec(Math.random() * 5 - 3, 20, Math.random() * 5 - 3), radius: this.hitboxSize.x / 2, length: this.hitboxSize.y, mass: this.mass},
             {phong: {color: 0xffffff}}
         );
 
@@ -117,7 +117,50 @@ export class Player extends Entity {
         this.vel = new Vec(finalVX, this.vel.y, finalVZ);
 
         if (Game.keys["Space"] && this.isColliding()) {
-            this.mesh.body.setVelocityY(6 * (1 / this.mass));
+            this.mesh.body.setVelocityY(12 * (1 / this.mass));
+        }
+
+        this.tryStepUp();
+    }
+
+    private tryStepUp() {
+        const MAX_STEP = 0.5;
+        const STEP_PUSH = 4;
+
+        const vel = this.mesh.body.velocity;
+        const horizSpeed = Math.sqrt(vel.x * vel.x + vel.z * vel.z);
+
+        if (horizSpeed < 0.5 || vel.y > 0.5) return;
+
+        const pos = this.getPos();
+        const nx = vel.x / horizSpeed;
+        const nz = vel.z / horizSpeed;
+        const footY = pos.y - this.hitboxSize.y / 2;
+
+        // first: is there actually a wall/step directly ahead at foot level?
+        const forwardRay = new Raycaster(
+            new Vector3(pos.x, footY + 0.1, pos.z),
+            new Vector3(nx, 0, nz)
+        );
+        const forwardHits = forwardRay.intersectObjects(Game.world!.scene.children, true)
+            .filter(h => !h.object.userData.bloodyFridayEntity); // ignore other players
+
+        if (forwardHits.length === 0 || forwardHits[0].distance > 0.8) return; // nothing close ahead
+
+        // second: what height is the top of that step?
+        const downRay = new Raycaster(
+            new Vector3(pos.x + nx * 0.5, footY + MAX_STEP + 0.1, pos.z + nz * 0.5),
+            new Vector3(0, -1, 0)
+        );
+        const downHits = downRay.intersectObjects(Game.world!.scene.children, true)
+            .filter(h => !h.object.userData.bloodyFridayEntity);
+
+        if (downHits.length === 0) return;
+
+        const stepHeight = downHits[0].point.y - footY;
+
+        if (stepHeight > 0.05 && stepHeight <= MAX_STEP) {
+            this.mesh.body.setVelocityY(STEP_PUSH);
         }
     }
 

@@ -1,4 +1,4 @@
-import {ExtendedGroup, FirstPersonControls, FLAT, Scene3D} from "enable3d";
+import {ExtendedGroup, FirstPersonControls, FLAT, Scene3D, THREE} from "enable3d";
 import {Entity} from "../entity/entity";
 import {Player} from "../entity/player"
 import {debug, Game, Vec} from "../util";
