@@ -6,9 +6,12 @@ import {Item} from "../item/main";
 import {Gun} from "../item/gun";
 
 export class Player extends Entity {
+    public name: string = "NO U-NAME ASSIGNED";
+
     public health: number = 20;
     public maxHealth: number = 20;
     public isDead: boolean = false;
+    private lastDamage: string = "NO LD-UUID ASSIGNED";
 
     public gun: Item = new Gun(this);
 
@@ -48,6 +51,7 @@ export class Player extends Entity {
                     this.health = this.maxHealth;
                     this.isDead = true;
                     this.setPos(new Vec(0, 2, 0));
+                    this.handleDeath();
                 }
             }
         }
@@ -132,10 +136,29 @@ export class Player extends Entity {
         this.recoilVelocity += amount;
     }
 
+    damage(amount: number, cause?: string) {
+        if (Game.self == this) {
+            Game.self!.health -= amount;
+            if (cause) {
+                this.lastDamage = cause;
+            }
+        } else {
+            Game.networking.sendDirect(Game.self!.uuid, this.uuid, {"type": "damage", "amount": amount});
+        }
+    }
+
+    handleDeath() {
+        if (this.lastDamage) {
+            Game.networking.sendDirect(this.uuid, this.lastDamage, {"type": "kill"})
+        }
+    }
+
     makePacket(): any {
         let packet = super.makePacket();
 
         if (Game.team != undefined) packet["team"] = Game.team;
+        packet["name"] = this.name;
+
         return packet;
     }
 }

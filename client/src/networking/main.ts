@@ -1,7 +1,7 @@
 import {debug, Game, Team, Vec} from "../util";
 import {updatePlayer} from "./updatePlayer";
 import {Entity} from "../entity/entity";
-import {handleDamage} from "./damage";
+import {handleDamage, handleKill} from "./damage";
 
 export class NetworkingData {
     public readonly clientId = crypto.randomUUID();
@@ -36,6 +36,7 @@ export class NetworkingData {
         let type = data["type"];
         if (type == "update") updatePlayer(sender, data);
         else if (type == "damage") handleDamage(sender, data);
+        else if (type == "kill") handleKill(sender, data);
     }
 
     onServerMessage(data: any) {
@@ -61,10 +62,6 @@ export class NetworkingData {
         message["msgType"] = "direct";
         message["msgDirectTarget"] = to;
         this.socket.send(JSON.stringify(message))
-    }
-
-    damageEntity(uuid: string, amount: number) {
-        this.sendDirect(Game.self!.uuid, uuid, {"type": "damage", "amount": amount});
     }
 
     pointsUpdate(points: number) {

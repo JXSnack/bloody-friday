@@ -7,6 +7,7 @@ import {UIInterface} from "../hud/main";
 import {DevOverlay} from "../hud/devOverlay";
 import {BarsOverlay} from "../hud/bars";
 import {HitConfirmOverlay} from "../hud/hitConfirm";
+import {KillOverlay} from "../hud/killOverlay";
 
 export class MainScene extends Scene3D {
     private entities: Record<string, Entity> = {};
@@ -37,6 +38,7 @@ export class MainScene extends Scene3D {
         this.deconstructor.add(FLAT)
 
         this.addUI(HitConfirmOverlay.INSTANCE);
+        this.addUI(KillOverlay.INSTANCE);
         this.addUI(new BarsOverlay());
         this.addUI(new DevOverlay());
 

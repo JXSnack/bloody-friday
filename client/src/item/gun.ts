@@ -4,6 +4,7 @@ import {debug, Game, Vec} from "../util";
 import {Raycaster, Vector3} from "three";
 import {HitConfirmOverlay} from "../hud/hitConfirm";
 import {Entity} from "../entity/entity";
+import {KillOverlay} from "../hud/killOverlay";
 
 export class Gun extends Item {
     constructor(owner: Player) {
@@ -42,7 +43,7 @@ export class Gun extends Item {
                     const entity: Player = obj.bloodyFridayEntity;
 
                     let damage = Math.random() * 3;
-                    Game.networking.damageEntity(entity.uuid, damage);
+                    entity.damage(damage);
 
                     let points = 20 + Math.round(Math.random() * 100);
                     HitConfirmOverlay.INSTANCE.doHit(points);

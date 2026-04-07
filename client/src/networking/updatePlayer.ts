@@ -4,12 +4,13 @@ import {Player} from "../entity/player";
 export function updatePlayer(sender: string, data: any) {
     if (Game.world == null) return;
 
-    let entity = Game.world.getEntity(sender);
+    let entity = Game.world.getEntity(sender) as Player;
     if (entity == null) {
         entity = new Player(Game.world);
         // @ts-ignore
         entity.uuid = sender;
         entity.remote = true;
+        entity.name = data["name"];
         Game.world.addEntity(entity);
 
         entity.mesh.body.setCollisionFlags(2);
