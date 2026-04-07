@@ -67,8 +67,8 @@ export class HitConfirmOverlay extends UIInterface {
         const cx = window.innerWidth / 2;
         const cy = window.innerHeight / 2;
 
-        const x = cx + Math.random() * 480 - 240;
-        const y = cy + Math.random() * 480 - 240;
+        const x = cx + Math.random() * 240 - 240/2;
+        const y = cy + Math.random() * 240 - 240/2;
 
         sprite.setPosition(x, y);
         sprite.setScale(1, 1);
@@ -87,7 +87,7 @@ export class HitConfirmOverlay extends UIInterface {
         this.addSprite(sprite);
         this.sprites.push({
             sprite,
-            duration: multiplier * 1000,
+            duration: 1000 + multiplier * 2000,
             since: Date.now(),
             points,
             vx,

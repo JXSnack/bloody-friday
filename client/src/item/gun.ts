@@ -42,7 +42,7 @@ export class Gun extends Item {
                     Game.networking.damageEntity(entity.uuid, damage);
                     Game.sounds.playShoot();
 
-                    HitConfirmOverlay.INSTANCE.doHit(120);
+                    HitConfirmOverlay.INSTANCE.doHit(20 + Math.round(Math.random() * 100));
 
                     return;
                 }
