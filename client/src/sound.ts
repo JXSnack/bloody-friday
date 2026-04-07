@@ -28,5 +28,6 @@ export class Sounds {
         if (this.hits.length == 0) return;
         let item = this.hits[Math.floor(Math.random() * this.hits.length)];
         item.play();
+        item.isPlaying = false;
     }
 }
