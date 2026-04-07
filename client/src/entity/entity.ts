@@ -27,7 +27,7 @@ export abstract class Entity {
     public mesh!: ExtendedMesh;
     public model?: Group;
     public modelOffset: Vec = Vec.ZERO;
-    private isLoadingModel: boolean = false;
+    isLoadingModel: boolean = false;
 
     loadModel(path: string, then: () => void) {
         if (this.isLoadingModel) return;
@@ -41,11 +41,10 @@ export abstract class Entity {
             debug("applied model to " + this.uuid);
             then();
         }).catch((err) => {
-            debug("FAILED to load model check console")
+            debug("FAILED to load model check console");
             console.error("Failed to load model:", err);
+            this.isLoadingModel = false; // only reset on failure so it can retry
         });
-
-        this.isLoadingModel = false;
     }
 
     create() {}
@@ -135,6 +134,12 @@ export abstract class Entity {
     removeMesh() {
         Game.world?.physics.destroy(this.mesh);
         Game.world?.destroy(this.mesh);
+
+        if (this.model != null) {
+            this.scene.destroy(this.model as ExtendedGroup);
+            this.model.remove();
+        }
+
         this.mesh.remove();
     }
 }

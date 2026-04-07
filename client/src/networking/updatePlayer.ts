@@ -12,7 +12,7 @@ export function updatePlayer(sender: string, data: any) {
         entity.remote = true;
         Game.world.addEntity(entity);
 
-        entity.mesh.body.setCollisionFlags(2); // CF_KINEMATIC_OBJECT
+        entity.mesh.body.setCollisionFlags(2);
         entity.mesh.body.setVelocity(0, 0, 0);
         entity.mesh.body.setAngularVelocity(0, 0, 0);
     }
@@ -21,17 +21,16 @@ export function updatePlayer(sender: string, data: any) {
     entity.setPos(new Vec(datPos.x, datPos.y, datPos.z));
 
     let datTeam: Team = data["team"];
-    if (datTeam != undefined && entity.model == undefined) {
-        debug("setting")
+    if (datTeam != undefined && entity.model == undefined && !entity.isLoadingModel) {
+        debug("setting model for " + sender);
+        entity.modelOffset = new Vec(0, -1, 0);
 
-        entity.modelOffset = entity.modelOffset.withAdd(new Vec(0, -1, 0));
-
-        entity.loadModel("/nationalist.glb", () => {
-            entity.model!.scale.set(1, 1, 1);
+        entity.loadModel(datTeam == Team.LOYALIST ? "/loyalist.glb" : "/nationalist.glb", () => {
+            if (datTeam == Team.NATIONALIST) entity.model!.scale.set(1, 1, 1);
+            else entity.model!.scale.set(0.5, 0.5, 0.5);
             if (Game.self == entity) {
                 entity.model!.visible = false;
             }
         });
     }
-
 }
