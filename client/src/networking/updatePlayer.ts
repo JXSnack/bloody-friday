@@ -20,6 +20,11 @@ export function updatePlayer(sender: string, data: any) {
     let datPos = data["pos"];
     entity.setPos(new Vec(datPos.x, datPos.y, datPos.z));
 
+    let datRot = data["rot"];
+    if (datRot != undefined) {
+        entity.targetRot = new Vec(datRot.x, datRot.y, datRot.z);
+    }
+
     let datTeam: Team = data["team"];
     if (datTeam != undefined && entity.model == undefined && !entity.isLoadingModel) {
         debug("setting model for " + sender);

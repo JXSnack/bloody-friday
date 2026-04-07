@@ -1,6 +1,6 @@
 import {Box, debug, Game, Vec} from "../util";
 import {ExtendedGroup, ExtendedMesh, Scene3D} from "enable3d";
-import {Group} from "three";
+import {Group, Vector3} from "three";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 
 export abstract class Entity {
@@ -20,6 +20,7 @@ export abstract class Entity {
     public remote: boolean = false;
 
     private targetPos: Vec | null = null;
+    public targetRot: Vec | null = null;
     public vel: Vec = Vec.ZERO;
     public hitboxSize: Vec = new Vec(1, 1, 1);
     public mass: number = 1;
@@ -99,6 +100,12 @@ export abstract class Entity {
 
         this.mesh.position.set(lerped.x, lerped.y, lerped.z);
         this.mesh.body.needUpdate = true;
+
+        if (this.targetRot != null && this.model != null) {
+            this.model.rotation.x += (this.targetRot.x - this.model.rotation.x) * this.LERP_FACTOR;
+            this.model.rotation.y += (this.targetRot.y - this.model.rotation.y) * this.LERP_FACTOR;
+            this.model.rotation.z += (this.targetRot.z - this.model.rotation.z) * this.LERP_FACTOR;
+        }
     }
 
     setPos(pos: Vec) {
@@ -116,6 +123,12 @@ export abstract class Entity {
         return Vec.from(this.mesh.position);
     }
 
+    getRot(): Vec {
+        const dir = new Vector3();
+        Game.world!.camera.getWorldDirection(dir);
+        return new Vec(0, Math.atan2(dir.x, dir.z), 0)
+    }
+
     isColliding(): boolean {
         return this.collisions > 0;
     }
@@ -128,7 +141,10 @@ export abstract class Entity {
     }
 
     makePacket(): any {
-        return {"type": "update", "pos": this.getPos()}
+        const dir = new Vector3();
+        Game.world!.camera.getWorldDirection(dir);
+
+        return {"type": "update", "pos": this.getPos(), "rot": this.getRot()}
     }
 
     removeMesh() {
