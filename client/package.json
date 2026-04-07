@@ -21,6 +21,7 @@
     "webpack-dev-server": "^5.2.3"
   },
   "dependencies": {
+    "@yandeu/audio": "^0.0.2",
     "enable3d": "^0.26.1",
     "phaser": "^3.90.0",
     "three": "^0.171.0"

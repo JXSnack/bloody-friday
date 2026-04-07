@@ -22,7 +22,7 @@ export class Player extends Entity {
 
     create() {
         this.mesh = this.scene.physics.add.box(
-            {...new Vec(Math.random() * 6 - 3, 1, Math.random() * 6 - 3), width: this.hitboxSize.x, height: this.hitboxSize.y, depth: this.hitboxSize.z, mass: this.mass},
+            {...new Vec(Math.random() * 5 - 3, 1, Math.random() * 5 - 3), width: this.hitboxSize.x, height: this.hitboxSize.y, depth: this.hitboxSize.z, mass: this.mass},
             {phong: {color: 0xffffff}}
         );
 

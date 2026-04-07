@@ -9,6 +9,9 @@ document.addEventListener("keyup",   (e) => (Game.keys[e.code] = false));
 
 PhysicsLoader("/lib", () => new Project({ scenes: [MainScene] }));
 
+// load audio
+Game.sounds.init();
+
 // update loop
 const updateLoopMs = 1000/20;
 

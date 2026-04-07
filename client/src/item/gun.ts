@@ -37,6 +37,7 @@ export class Gun extends Item {
                     const entity = obj.bloodyFridayEntity;
                     debug("hit entity", entity.uuid);
                     Game.networking.damageEntity(entity.uuid, Math.random() * 3);
+                    Game.sounds.playShoot();
                     return;
                 }
                 obj = obj.parent;

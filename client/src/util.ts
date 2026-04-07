@@ -5,6 +5,8 @@ import {MainScene} from "./scene/world";
 import {FLAT} from "enable3d";
 import {GLTF, GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {Entity} from "./entity/entity";
+import {AudioManager} from "@yandeu/audio";
+import {Sounds} from "./sound";
 
 export enum Team {
     NATIONALIST,
@@ -89,6 +91,8 @@ class GameInstance {
     public self: Player | null = null;
     public world: MainScene | null = null;
     public hud: FLAT.FlatArea | null = null;
+    public audio: AudioManager = new AudioManager();
+    public sounds: Sounds = new Sounds();
 
     public loyalistPoints: number = 0;
     public nationalistPoints: number = 0;
