@@ -40,6 +40,7 @@ export class Player extends Entity {
         if (!this.remote) {
             if (!this.isDead) {
                 if (this.health <= 0) {
+                    debug("I have perished")
                     this.health = this.maxHealth;
                     this.isDead = true;
                     this.setPos(new Vec(0, 2, 0));
