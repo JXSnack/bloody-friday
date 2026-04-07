@@ -4,6 +4,7 @@ import {FLAT} from "enable3d";
 
 export class DevOverlay extends UIInterface {
     private sprite!: FLAT.TextSprite;
+    private position!: FLAT.TextSprite;
     private visible: boolean = true;
 
     create() {
@@ -13,7 +14,15 @@ export class DevOverlay extends UIInterface {
         this.sprite.setDepth(1)
         this.sprite.setScale(1)
         this.addSprite(this.sprite)
-        debug("test")
+
+        const pTex = new FLAT.TextTexture("?", {fontSize: 28})
+        this.position = new FLAT.TextSprite(pTex);
+
+        this.position.setDepth(1);
+        this.position.setScale(1);
+        this.addSprite(this.position);
+
+        debug("dev overlay ready")
     }
 
     update() {
@@ -24,10 +33,16 @@ export class DevOverlay extends UIInterface {
         }
 
         this.sprite.visible = this.visible;
+        this.position.visible = this.visible;
 
         const tex = new FLAT.TextTexture(debugOutput.join("\n"), {fontSize: 28})
         this.sprite.setTexture(tex);
         this.sprite.setScale(1);
         this.sprite.setPosition(this.sprite.textureWidth / 2, this.sprite.textureHeight / 2);
+
+        const pTex = new FLAT.TextTexture(JSON.stringify(Game.self!.getPos()), {fontSize: 28})
+        this.position.setTexture(pTex);
+        this.position.setScale(1);
+        this.position.setPosition(window.innerWidth / 2, window.innerHeight - this.position.textureHeight - 48);
     }
 }
