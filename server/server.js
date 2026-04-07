@@ -12,6 +12,8 @@ class Client {
 
 const wss = new WebSocket.Server({ port: 8080 })
 let lastTeam = 0;
+let nationalistPoints = 0;
+let loyalistPoints = 0;
 
 wss.on('connection', (ws) => {
     console.log("client connected")
@@ -45,6 +47,23 @@ wss.on('connection', (ws) => {
             })
         } else if (msgType === "direct") {
             let target = data.msgDirectTarget;
+            if (target === "server") {
+                let type = data.type;
+                
+                if (type === "pointsUp") {
+                    let team = data.team;
+                    if (team === 0) {
+                        nationalistPoints += data.amount;
+                    } else {
+                        loyalistPoints += data.amount;
+                    }
+                    
+                    broadcast({"sender": "server", "type": "pointsUpdate", "nationalist": nationalistPoints, "loyalist": loyalistPoints})
+                }
+                
+                return;
+            }
+            
             for (let client of authedClients) {
                 if (client.uuid === target) {
                     client.ws.send(message.toString())
@@ -62,12 +81,16 @@ wss.on('connection', (ws) => {
         if (!authed) return;
         authedClients.splice(authedClients.indexOf(self), 1);
         
-        wss.clients.forEach((client) => {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(JSON.stringify({"sender": "server", "type": "disconnect", "uuid": self.uuid}))
-            }
-        })
+        broadcast({"sender": "server", "type": "disconnect", "uuid": self.uuid})
     })
 })
+
+function broadcast(message) {
+    wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify(message))
+        }
+    })
+}
 
 console.log("running on ws://localhost:8080")

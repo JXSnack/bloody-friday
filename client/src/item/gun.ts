@@ -3,6 +3,7 @@ import {Player} from "../entity/player";
 import {debug, Game, Vec} from "../util";
 import {Raycaster, Vector3} from "three";
 import {HitConfirmOverlay} from "../hud/hitConfirm";
+import {Entity} from "../entity/entity";
 
 export class Gun extends Item {
     constructor(owner: Player) {
@@ -38,13 +39,14 @@ export class Gun extends Item {
             // walk up the parent chain since the stamped mesh may be a parent
             while (obj != null) {
                 if (obj.bloodyFridayEntity) {
-                    const entity = obj.bloodyFridayEntity;
-                    debug("hit entity", entity.uuid);
+                    const entity: Player = obj.bloodyFridayEntity;
 
                     let damage = Math.random() * 3;
                     Game.networking.damageEntity(entity.uuid, damage);
 
-                    HitConfirmOverlay.INSTANCE.doHit(20 + Math.round(Math.random() * 100));
+                    let points = 20 + Math.round(Math.random() * 100);
+                    HitConfirmOverlay.INSTANCE.doHit(points);
+                    Game.networking.pointsUpdate(points);
 
                     return;
                 }

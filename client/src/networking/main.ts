@@ -44,6 +44,9 @@ export class NetworkingData {
         } else if (data["type"] == "team") {
             Game.team = data["teamId"];
             debug("Received team " + Game.team)
+        } else if (data["type"] == "pointsUpdate") {
+            Game.nationalistPoints = data["nationalist"];
+            Game.loyalistPoints = data["loyalist"];
         }
     }
 
@@ -62,5 +65,9 @@ export class NetworkingData {
 
     damageEntity(uuid: string, amount: number) {
         this.sendDirect(Game.self!.uuid, uuid, {"type": "damage", "amount": amount});
+    }
+
+    pointsUpdate(points: number) {
+        this.sendDirect(Game.self!.uuid, "server", {"type": "pointsUp", "team": Game.team!, "amount": points})
     }
 }
