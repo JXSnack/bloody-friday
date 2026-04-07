@@ -1,6 +1,7 @@
 import {Item} from "./main";
 import {Player} from "../entity/player";
-import {Game, Vec} from "../util";
+import {debug, Game, Vec} from "../util";
+import {Raycaster, Vector3} from "three";
 
 export class Gun extends Item {
     constructor(owner: Player) {
@@ -16,5 +17,30 @@ export class Gun extends Item {
         this.loadModel("/gun.glb", () => {
             this.model?.scale.set(0.2, 0.2, 0.2);
         })
+    }
+
+    use() {
+        const origin = Game.self!.getPos().withAdd(new Vec(0, 0.5, 0));
+
+        const direction = new Vector3();
+        Game.world!.camera.getWorldDirection(direction);
+
+        const raycaster = new Raycaster(origin.to3(), direction.normalize());
+        const hits = raycaster.intersectObjects(Game.world!.scene.children, true);
+
+        for (const hit of hits) {
+            let obj: any = hit.object;
+
+            // walk up the parent chain since the stamped mesh may be a parent
+            while (obj != null) {
+                if (obj.bloodyFridayEntity) {
+                    const entity = obj.bloodyFridayEntity;
+                    debug("hit entity", entity.uuid);
+                    Game.networking.damageEntity(entity.uuid, Math.random() * 3);
+                    return;
+                }
+                obj = obj.parent;
+            }
+        }
     }
 }
