@@ -124,9 +124,14 @@ export abstract class Entity {
     }
 
     getRot(): Vec {
-        const dir = new Vector3();
-        Game.world!.camera.getWorldDirection(dir);
-        return new Vec(0, Math.atan2(dir.x, dir.z), 0)
+        if (Game.self!.uuid == this.uuid) {
+            const dir = new Vector3();
+            Game.world!.camera.getWorldDirection(dir);
+            return new Vec(0, Math.atan2(dir.x, dir.z), 0)
+        } else {
+            if (this.model == null) return Vec.ZERO;
+            return new Vec(this.model.rotation.x, this.model.rotation.y, this.model.rotation.z);
+        }
     }
 
     isColliding(): boolean {
