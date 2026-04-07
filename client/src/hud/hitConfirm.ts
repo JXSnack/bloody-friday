@@ -5,42 +5,94 @@ import {debug} from "../util";
 export class HitConfirmOverlay extends UIInterface {
     static readonly INSTANCE: HitConfirmOverlay = new HitConfirmOverlay();
 
-    private sprites: {sprite: FLAT.TextSprite, duration: number, since: number, points: number}[] = [];
+    private sprites: {
+        sprite: FLAT.TextSprite,
+        duration: number,
+        since: number,
+        points: number,
+        vx: number,
+        vy: number
+    }[] = [];
 
     create() {
 
     }
 
     update() {
-        for (let sprite of this.sprites) {
-            if (sprite.since + sprite.duration < Date.now()) {
-                this.removeSprite(sprite.sprite);
-                this.sprites.splice(this.sprites.indexOf(sprite), 1);
-                debug("removed sprite")
+        const now = Date.now();
+
+        for (let i = this.sprites.length - 1; i >= 0; i--) {
+            const s = this.sprites[i];
+
+            const progress = (now - s.since) / s.duration;
+            if (progress >= 1) {
+                this.removeSprite(s.sprite);
+                this.sprites.splice(i, 1);
                 continue;
             }
 
-            const progress = (Date.now() - sprite.since) / sprite.duration;
-            sprite.sprite.setTexture(this.makeTex(sprite.points, {fillStyle: `rgba(${this.makeCol(sprite.points)}, ${1 - progress})`}))
-            sprite.sprite.texture.needsUpdate = true;
+            const alpha = Math.max(0, 1 - progress);
+
+            // movement (ease out)
+            const ease = 1 - Math.pow(progress, 2);
+
+            const pos = s.sprite.position;
+            pos.x += s.vx * ease * 10;
+            pos.y += s.vy * ease * 10;
+
+            // slight upward drift (classic shooter feel)
+            pos.y -= 0.3;
+
+            // scale pop then shrink
+            const scale = 1 + Math.sin(progress * Math.PI) * 0.3;
+            s.sprite.setScale(scale, scale);
+
+            // update color/alpha
+            s.sprite.setTexture(
+                this.makeTex(s.points, {
+                    fillStyle: `rgba(${this.makeCol(s.points)}, ${alpha})`
+                })
+            );
+            s.sprite.texture.needsUpdate = true;
         }
     }
 
     // points between 20 - 120
     doHit(points: number) {
-        let multiplier = points / 120;
+        const multiplier = points / 120;
 
         const tex = this.makeTex(points, {});
         const sprite = new FLAT.TextSprite(tex);
 
+        const cx = window.innerWidth / 2;
+        const cy = window.innerHeight / 2;
+
+        const x = cx + Math.random() * 480 - 240;
+        const y = cy + Math.random() * 480 - 240;
+
+        sprite.setPosition(x, y);
         sprite.setScale(1, 1);
         sprite.setDepth(1);
-        sprite.setPosition(window.innerWidth / 2 + Math.random() * 240 * 2 - 240, window.innerHeight / 2 + Math.random() * 240 * 2 - 240);
+
+        // direction away from center
+        const dx = x - cx;
+        const dy = y - cy;
+        const len = Math.sqrt(dx * dx + dy * dy) || 1;
+
+        const speed = 0.2 + Math.random() * 0.8;
+
+        const vx = (dx / len) * speed;
+        const vy = (dy / len) * speed;
 
         this.addSprite(sprite);
-        this.sprites.push({sprite: sprite, duration: multiplier * 6000, since: Date.now(), points: points});
-
-        debug("did hit")
+        this.sprites.push({
+            sprite,
+            duration: multiplier * 1000,
+            since: Date.now(),
+            points,
+            vx,
+            vy
+        });
     }
 
     private makeTex(points: number, textStyles: FLAT.TextStyles): FLAT.TextTexture {
