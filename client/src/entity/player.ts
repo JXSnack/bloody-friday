@@ -75,7 +75,7 @@ export class Player extends Entity {
     }
 
     private handlePlayerControls() {
-        const maxSpeed = 5;
+        const maxSpeed = Game.keys["ShiftLeft"] ? 12 : 5;
         const accel = 0.2;
         const friction = 0.15;
 
