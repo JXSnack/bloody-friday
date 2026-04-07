@@ -1,6 +1,7 @@
 import {Group} from "three";
 import {debug, Game, Vec} from "../util";
 import {Player} from "../entity/player";
+import {ExtendedGroup} from "enable3d";
 
 export abstract class Item {
     public readonly typeId: string;
@@ -52,5 +53,10 @@ export abstract class Item {
             console.error("Failed to load item model:", err);
             this.isLoadingModel = false; // only reset on failure so it can retry
         });
+    }
+
+    removeMesh() {
+        this.owner.scene.destroy(this.model as ExtendedGroup);
+        this.model?.remove();
     }
 }

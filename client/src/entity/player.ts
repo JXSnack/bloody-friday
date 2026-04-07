@@ -105,6 +105,11 @@ export class Player extends Entity {
         this.activeItem = item;
     }
 
+    removeMesh() {
+        super.removeMesh();
+        this.gun.removeMesh();
+    }
+
     makePacket(): any {
         let packet = super.makePacket();
 
