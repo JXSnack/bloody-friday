@@ -23,7 +23,7 @@ module.exports = {
     ],
     devServer: {
         host: '127.0.0.1',
-        allowedHosts: ['friday.snackbag.net'],
+        allowedHosts: ['friday.snackbag.net', '127.0.0.1'],
         static: {
             directory: path.join(__dirname, "public"),
         },
