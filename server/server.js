@@ -93,4 +93,4 @@ function broadcast(message) {
     })
 }
 
-console.log("running on ws://localhost:8080")
+console.log("running on ws://127.0.0.1:5174")
