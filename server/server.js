@@ -10,7 +10,7 @@ class Client {
     }
 }
 
-const wss = new WebSocket.Server({ port: 8080 })
+const wss = new WebSocket.Server({ port: 5174 })
 let lastTeam = 0;
 let nationalistPoints = 0;
 let loyalistPoints = 0;
