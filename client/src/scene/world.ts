@@ -30,9 +30,11 @@ export class MainScene extends Scene3D {
         this.physics.add.ground({mass: 0, width: 10, height: 10});
 
         let arenaModel = await this.load.gltf("/arena.glb");
+        arenaModel.scene.scale.set(0.5, 0.5, 0.5)
         this.add.existing(arenaModel.scene);
 
         let arenaCollisions = await this.load.gltf("/arena_collisions.glb");
+        arenaCollisions.scene.scale.set(0.5, 0.5, 0.5)
 
         this.physics.add.existing(arenaCollisions.scene as ExtendedGroup, {
             shape: "concave",
