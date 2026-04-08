@@ -22,6 +22,8 @@ module.exports = {
         new HtmlWebpackPlugin({ template: "./index.html" }),
     ],
     devServer: {
+        host: '127.0.0.1',
+        allowedHosts: ['friday.snackbag.net'],
         static: {
             directory: path.join(__dirname, "public"),
         },
