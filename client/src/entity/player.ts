@@ -4,6 +4,7 @@ import {debug, Game, Vec} from "../util";
 import {Raycaster, Vector3} from "three";
 import {Item} from "../item/main";
 import {Gun} from "../item/gun";
+import {CarBomb} from "../item/carbomb";
 
 export class Player extends Entity {
     public name: string = "NO U-NAME ASSIGNED";
@@ -14,6 +15,7 @@ export class Player extends Entity {
     private lastDamage: string = "NO LD-UUID ASSIGNED";
 
     public gun: Item = new Gun(this);
+    public carBomb: Item = new CarBomb(this);
 
     public activeItem: Item = this.gun;
 
@@ -39,6 +41,7 @@ export class Player extends Entity {
         this.mesh.visible = false;
 
         this.gun.create();
+        this.carBomb.create();
     }
 
     update() {

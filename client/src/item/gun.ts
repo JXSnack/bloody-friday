@@ -55,6 +55,7 @@ export class Gun extends Item {
         const hits = raycaster.intersectObjects(Game.world!.scene.children, true);
 
         Game.sounds.playShoot();
+        Game.networking.send(Game.self!.uuid, {"type": "someShot", "pos": Game.self!.getPos()})
         Game.self?.applyRecoil(0.15 + Math.random() * 0.1);
 
         for (const hit of hits) {

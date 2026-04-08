@@ -32,6 +32,12 @@ export class Vec {
         return new Vec(this.x / other.x, this.y / other.y, this.z / other.z);
     }
 
+    withNormalized(): Vec {
+        const length = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+        if (length === 0) return new Vec(0, 0, 0);
+        return new Vec(this.x / length, this.y / length, this.z / length);
+    }
+
     rotateAround(pivot: Vec, rotation: Vec): Vec {
         // Translate to origin
         let x = this.x - pivot.x;
@@ -73,7 +79,7 @@ export class Vec {
     }
 
     static ZERO = new Vec(0, 0, 0);
-    static from = (vector: Vector3): Vec => {
+    static from = (vector: {x: number, y: number, z: number}): Vec => {
         return new Vec(vector.x, vector.y, vector.z);
     }
 
