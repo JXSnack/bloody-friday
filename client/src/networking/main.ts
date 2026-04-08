@@ -5,7 +5,7 @@ import {handleDamage, handleKill} from "./damage";
 
 export class NetworkingData {
     public readonly clientId = crypto.randomUUID();
-    public readonly socket = new WebSocket("ws://127.0.0.1:5174")
+    public readonly socket = new WebSocket(`ws://${window.location.host}:5174`)
 
     init() {
         this.socket.onopen = () => this.onSocketOpen();
