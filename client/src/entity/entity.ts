@@ -1,4 +1,4 @@
-import {Box, debug, Game, Vec} from "../util";
+import {Box, debug, Game, Team, Vec} from "../util";
 import {ExtendedGroup, ExtendedMesh, Scene3D} from "enable3d";
 import {Group, Vector3} from "three";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
@@ -149,8 +149,10 @@ export abstract class Entity {
         const dir = new Vector3();
         Game.world!.camera.getWorldDirection(dir);
 
-        return {"type": "update", "pos": this.getPos(), "rot": this.getRot()}
+        return {"type": "update", "entityType": this.typeId, "pos": this.getPos(), "rot": this.getRot()}
     }
+
+    handlePacket(sender: string, data: any) {}
 
     removeMesh() {
         Game.world?.physics.destroy(this.mesh);

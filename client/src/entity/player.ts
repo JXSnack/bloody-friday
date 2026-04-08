@@ -1,6 +1,6 @@
 import {Entity} from "./entity";
 import {FirstPersonControls, Scene3D} from "enable3d";
-import {debug, Game, Vec} from "../util";
+import {debug, Game, Team, Vec} from "../util";
 import {Raycaster, Vector3} from "three";
 import {Item} from "../item/main";
 import {Gun} from "../item/gun";
@@ -17,7 +17,7 @@ export class Player extends Entity {
     public gun: Item = new Gun(this);
     public carBomb: Item = new CarBomb(this);
 
-    public activeItem: Item = this.gun;
+    public activeItem: Item = this.carBomb;
 
     // recoil state
     public recoil = 0;
@@ -206,5 +206,31 @@ export class Player extends Entity {
         packet["name"] = this.name;
 
         return packet;
+    }
+
+    handlePacket(sender: string, data: any) {
+        super.handlePacket(sender, data);
+
+        let datPos = data["pos"];
+        this.setPos(new Vec(datPos.x, datPos.y, datPos.z));
+
+        let datRot = data["rot"];
+        if (datRot != undefined) {
+            this.targetRot = new Vec(datRot.x, datRot.y, datRot.z);
+        }
+
+        let datTeam: Team = data["team"];
+        if (datTeam != undefined && this.model == undefined && !this.isLoadingModel) {
+            debug("setting model for " + sender);
+            this.modelOffset = new Vec(0, -1, 0);
+
+            this.loadModel(datTeam == Team.LOYALIST ? "/loyalist.glb" : "/nationalist.glb", () => {
+                if (datTeam == Team.NATIONALIST) this.model!.scale.set(1, 1, 1);
+                else this.model!.scale.set(0.5, 0.5, 0.5);
+                if (Game.self == this) {
+                    this.model!.visible = false;
+                }
+            });
+        }
     }
 }
