@@ -6,7 +6,7 @@ import {handleDamage, handleKill} from "./damage";
 export class NetworkingData {
     public readonly clientId = crypto.randomUUID();
     private readonly baseURL: string = `${window.location.protocol == "https:" ? "wss://friday.snackbag.net/ws/" : "ws://127.0.0.1:5174"}}`;
-    public readonly socket = new WebSocket(`wss://${window.location.host}/ws/`)
+    public readonly socket = new WebSocket(this.baseURL)
 
     init() {
         this.socket.onopen = () => this.onSocketOpen();
