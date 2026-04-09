@@ -78,7 +78,7 @@ export class CarBombEntity extends Entity {
         }
 
         // Tell everyone to remove it
-        let data = {type: "explosion"}
+        let data = {type: "explosion", pos: pos}
 
         Game.networking.send(this.uuid, data);
         handleExplosion(this.uuid, data);

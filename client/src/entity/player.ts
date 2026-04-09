@@ -17,7 +17,7 @@ export class Player extends Entity {
     public gun: Item = new Gun(this);
     public carBomb: Item = new CarBomb(this);
 
-    public activeItem: Item = this.carBomb;
+    public activeItem: Item = this.gun;
 
     // recoil state
     public recoil = 0;
