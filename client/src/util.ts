@@ -107,7 +107,18 @@ class GameInstance {
     doUpdate() {
         if (this.self == null) return;
         this.self.broadcast();
-        this.world?.checkEntityLifetimes();
+
+        if (this.world) {
+            this.world?.checkEntityLifetimes();
+
+            for (let entity of Object.values(this.world["entities"])) {
+                if (!entity.remote) {
+                    if (entity == this.self) continue;
+
+                    entity.broadcast()
+                }
+            }
+        }
     }
 
     private modelCachePromises: Record<string, Promise<GLTF>> = {};

@@ -211,9 +211,6 @@ export class Player extends Entity {
     handlePacket(sender: string, data: any) {
         super.handlePacket(sender, data);
 
-        let datPos = data["pos"];
-        this.setPos(new Vec(datPos.x, datPos.y, datPos.z));
-
         let datRot = data["rot"];
         if (datRot != undefined) {
             this.targetRot = new Vec(datRot.x, datRot.y, datRot.z);

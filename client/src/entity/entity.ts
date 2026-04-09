@@ -5,7 +5,7 @@ import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 
 export abstract class Entity {
     public readonly typeId: string;
-    public uuid = crypto.randomUUID();
+    public uuid: string = crypto.randomUUID();
     public lastPing: number = Date.now();
 
     private readonly LERP_FACTOR = 0.2; // tune this (0.1 = smooth, 0.3 = snappier)
@@ -22,6 +22,7 @@ export abstract class Entity {
     private targetPos: Vec | null = null;
     public targetRot: Vec | null = null;
     public vel: Vec = Vec.ZERO;
+    public stopMessingWithVelocity: boolean = false;
     public hitboxSize: Vec = new Vec(1, 1, 1);
     public mass: number = 1;
 
@@ -53,7 +54,7 @@ export abstract class Entity {
     initMeshStuff() {
         // @ts-ignore
         this.mesh.bloodyFridayEntity = this;
-        this.mesh.body.on.collision((other: any, event) => {
+        if (this.mesh.body) this.mesh.body.on.collision((other: any, event) => {
             if (event == "start") {
                 this.collisions++;
 
@@ -70,13 +71,13 @@ export abstract class Entity {
         let pos = this.getPos();
 
         if (this.remote && this.targetPos != null) this.updateLerpedRemotePos();
-        else if (!this.remote) {
+        else if (!this.remote && !this.stopMessingWithVelocity && this.mesh.body) {
             const vy = this.mesh.body.velocity.y;
             this.mesh.body.setVelocity(this.vel.x, vy + this.vel.y, this.vel.z);
             this.vel = Vec.ZERO;
         }
 
-        if (!this.remote && this.getPos().y < -1) {
+        if (!this.remote && !this.stopMessingWithVelocity && this.getPos().y < -1) {
             this.vel = this.vel.withAdd(new Vec(0, 2, 0))
         }
 
@@ -99,7 +100,12 @@ export abstract class Entity {
         );
 
         this.mesh.position.set(lerped.x, lerped.y, lerped.z);
-        this.mesh.body.needUpdate = true;
+        if (this.mesh.body) this.mesh.body.needUpdate = true;
+        else {
+            this.mesh.position.set(lerped.x, lerped.y, lerped.z);
+            this.mesh.updateMatrix();
+            this.mesh.updateMatrixWorld(true);
+        }
 
         if (this.targetRot != null && this.model != null) {
             this.model.rotation.x += (this.targetRot.x - this.model.rotation.x) * this.LERP_FACTOR;
@@ -152,7 +158,10 @@ export abstract class Entity {
         return {"type": "update", "entityType": this.typeId, "pos": this.getPos(), "rot": this.getRot()}
     }
 
-    handlePacket(sender: string, data: any) {}
+    handlePacket(sender: string, data: any) {
+        let datPos = data["pos"];
+        this.setPos(new Vec(datPos.x, datPos.y, datPos.z));
+    }
 
     removeMesh() {
         Game.world?.physics.destroy(this.mesh);

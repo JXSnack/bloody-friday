@@ -1,7 +1,7 @@
 import {debug, Game, Team, Vec} from "../util";
 import {updatePlayer} from "./updatePlayer";
 import {Entity} from "../entity/entity";
-import {handleDamage, handleKill, handleSomeShot} from "./damage";
+import {handleDamage, handleExplosion, handleKill, handleSomeShot} from "./damage";
 
 export class NetworkingData {
     public readonly clientId = crypto.randomUUID();
@@ -39,6 +39,7 @@ export class NetworkingData {
         else if (type == "damage") handleDamage(sender, data);
         else if (type == "kill") handleKill(sender, data);
         else if (type == "someShot") handleSomeShot(sender, data);
+        else if (type == "explosion") handleExplosion(sender, data);
     }
 
     onServerMessage(data: any) {

@@ -1,7 +1,7 @@
 import {debug, Game, Team, Vec} from "../util";
 import {Player} from "../entity/player";
 
-export function updatePlayer(sender: string, data: any) {
+export async function updatePlayer(sender: string, data: any) {
     if (Game.world == null) return;
 
     let rawEntity = Game.world.getEntity(sender);
@@ -10,7 +10,6 @@ export function updatePlayer(sender: string, data: any) {
         if (rawEntity == undefined) {
             let entity = new Player(Game.world);
             rawEntity = entity;
-            // @ts-ignore
             entity.uuid = sender;
             entity.remote = true;
             entity.name = data["name"];
@@ -19,6 +18,18 @@ export function updatePlayer(sender: string, data: any) {
             entity.mesh.body.setCollisionFlags(2);
             entity.mesh.body.setVelocity(0, 0, 0);
             entity.mesh.body.setAngularVelocity(0, 0, 0);
+        }
+    } else if (data.entityType == "car_bomb_entity") {
+        if (rawEntity == undefined) {
+            const owner = Game.world.getEntity(data.owner) as Player;
+            if (!owner) return;
+
+            const { CarBombEntity } = await import("../entity/carbomb");
+            let entity = new CarBombEntity(owner);
+            rawEntity = entity;
+            entity.uuid = sender;
+            entity.remote = true;
+            Game.world.addEntity(entity);
         }
     } else {
         return;

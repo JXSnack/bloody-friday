@@ -30,3 +30,7 @@ export function handleSomeShot(sender: string, data: any) {
 
     Game.sounds.playMiss(volume);
 }
+
+export function handleExplosion(uuid: string, data: any) {
+    Game.world?.removeEntity(uuid);
+}
