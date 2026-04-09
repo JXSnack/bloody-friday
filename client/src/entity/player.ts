@@ -14,8 +14,8 @@ export class Player extends Entity {
     public isDead: boolean = false;
     private lastDamage: string = "NO LD-UUID ASSIGNED";
 
-    public gun: Item = new Gun(this);
-    public carBomb: Item = new CarBomb(this);
+    public gun: Gun = new Gun(this);
+    public carBomb: CarBomb = new CarBomb(this);
 
     public activeItem: Item = this.gun;
 

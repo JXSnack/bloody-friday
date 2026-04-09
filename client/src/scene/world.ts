@@ -31,15 +31,15 @@ export class MainScene extends Scene3D {
 
         let arenaModel = await this.load.gltf("./arena.glb");
         arenaModel.scene.scale.set(0.5, 0.5, 0.5)
-        // this.add.existing(arenaModel.scene);
+        this.add.existing(arenaModel.scene);
 
         let arenaCollisions = await this.load.gltf("./arena_collisions.glb");
         arenaCollisions.scene.scale.set(0.5, 0.5, 0.5)
 
-        // this.physics.add.existing(arenaCollisions.scene as ExtendedGroup, {
-        //     shape: "concave",
-        //     mass: 0
-        // })
+        this.physics.add.existing(arenaCollisions.scene as ExtendedGroup, {
+            shape: "concave",
+            mass: 0
+        })
 
         Game.self = new Player(this);
         Game.self.uuid = Game.networking.clientId;

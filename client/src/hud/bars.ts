@@ -11,6 +11,13 @@ export class BarsOverlay extends UIInterface {
     private readonly pbWidth: number = 0.5 * window.innerWidth;
     private readonly hbWidth: number = 0.4 * window.innerWidth;
     private readonly hbHeight: number = 120;
+    private readonly itemDistance = 8;
+    private readonly itemWidth = (this.hbWidth - 24 - this.itemDistance * 2) / 3;
+    private readonly itemHeight = this.hbHeight - 25 - 14 * 3;
+
+    private readonly gunSource = new Image();
+    private readonly waterCannonSource = new Image();
+    private readonly carBombSource = new Image();
 
     private redrawSprite(sprite: FLAT.DrawSprite, width: number, height: number, draw: (ctx: CanvasRenderingContext2D) => void) {
         const tempCanvas = document.createElement('canvas');
@@ -25,20 +32,69 @@ export class BarsOverlay extends UIInterface {
     }
 
     private drawHealthBar(ctx: CanvasRenderingContext2D) {
+        // background
         ctx.beginPath();
         ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
         ctx.roundRect(0, 0, this.hbWidth, this.hbHeight, 10);
         ctx.fill();
 
+        // health bar background
         ctx.beginPath();
         ctx.fillStyle = "#727272";
         ctx.roundRect(12, this.hbHeight - 25 - 14, this.hbWidth - 24, 25, 4);
         ctx.fill();
 
+        // health bar
         ctx.beginPath();
         ctx.fillStyle = "white";
         ctx.roundRect(12, this.hbHeight - 25 - 14, (Game.self!.health / Game.self!.maxHealth) * (this.hbWidth - 24), 25, 4);
         ctx.fill();
+
+        // items
+
+        // gun
+        if (!Game.self!.gun.isReloading) this.renderInventorySlot(ctx, "1", 14, this.gunSource, Game.self!.gun.ammo.toString(), Game.self!.gun.fullAmmo.toString());
+        else this.renderInventorySlot(ctx, "1", 14, this.gunSource, Game.self!.gun.ammo.toString(), Game.self!.gun.fullAmmo.toString(), "Reloading...");
+
+        // water/teacannon
+        this.renderInventorySlot(ctx, "2", 12 + this.itemWidth + this.itemDistance, this.waterCannonSource, "100", "100", "2500 punten")
+
+        // car bomb
+        this.renderInventorySlot(ctx, "3", 12 + this.itemWidth * 2 + this.itemDistance * 2, this.carBombSource, "Autobom", "Area Damage", "5000 punten");
+    }
+
+    private renderInventorySlot(ctx: CanvasRenderingContext2D, number: string, x: number, icon: HTMLImageElement, bigText: string, smallText: string, overlay?: string) {
+        ctx.beginPath();
+        ctx.fillStyle = "white";
+        ctx.strokeStyle = "white";
+        ctx.roundRect(x - 2, 14, this.itemWidth, this.itemHeight, 4)
+        ctx.stroke()
+
+        ctx.beginPath()
+        ctx.drawImage(icon, x + 12, 14 + 2, this.itemHeight, this.itemHeight)
+
+        ctx.beginPath();
+        ctx.font = "24px monospace"
+        let bigTextOffset = ctx.measureText(bigText).width;
+        ctx.fillText(bigText, x - 14 + this.itemWidth - bigTextOffset, this.itemHeight - 12);
+
+        ctx.beginPath();
+        ctx.font = "16px monospace"
+        ctx.fillStyle = "gray";
+        let smallTextOffset = ctx.measureText(smallText).width;
+        ctx.fillText(smallText, x - 14 + this.itemWidth - smallTextOffset, this.itemHeight + 5);
+
+        if (overlay) {
+            ctx.beginPath();
+            ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
+            ctx.roundRect(x - 2, 14, this.itemWidth, this.itemHeight, 4);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.font = "24px RobotoReg, monospace";
+            ctx.fillStyle = "white";
+            ctx.fillText(overlay, x - 14 + this.itemWidth / 2 - ctx.measureText(overlay).width / 2 + 12, 14 + (this.itemHeight - 14) - 7)
+        }
     }
 
     private drawPointBar(ctx: CanvasRenderingContext2D) {
@@ -54,12 +110,18 @@ export class BarsOverlay extends UIInterface {
     create() {
         if (Game.world == null) return;
 
+        // load images
         Game.world.load.texture("/crosshair.png").then((tx) => {
             debug("crosshair ready");
             this.crosshair = new FLAT.SimpleSprite(tx);
             this.addSprite(this.crosshair);
         });
 
+        this.gunSource.src = "/gun.png";
+        this.waterCannonSource.src = "/water_cannon.png"
+        this.carBombSource.src = "/car_bomb.png"
+
+        // stuff
         let roboto = new FontFace("RobotoReg", "url(/Roboto-Regular.ttf)");
         document.fonts.add(roboto);
         roboto.load().then(() => {

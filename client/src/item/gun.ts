@@ -10,10 +10,10 @@ export class Gun extends Item {
     private readonly cooldown: number = 400;
     private lastShot: number = Date.now();
 
-    private readonly fullAmmo: number = 20;
+    public readonly fullAmmo: number = 20;
     private readonly reloadTime: number = 2000;
-    private isReloading: boolean = false;
-    private ammo: number = 5;
+    public isReloading: boolean = false;
+    public ammo: number = 5;
 
     constructor(owner: Player) {
         super(owner, "gun");
@@ -33,13 +33,7 @@ export class Gun extends Item {
     use() {
         if (this.lastShot + this.cooldown > Date.now()) return;
         if (this.ammo <= 0) {
-            if (!this.isReloading) {
-                this.isReloading = true;
-                setTimeout(() => {
-                    this.ammo = this.fullAmmo;
-                    this.isReloading = false;
-                }, this.reloadTime)
-            }
+            this.doReload();
             return;
         }
 
@@ -77,6 +71,18 @@ export class Gun extends Item {
                 }
                 obj = obj.parent;
             }
+        }
+
+        if (this.ammo <= 0) this.doReload();
+    }
+
+    private doReload() {
+        if (!this.isReloading) {
+            this.isReloading = true;
+            setTimeout(() => {
+                this.ammo = this.fullAmmo;
+                this.isReloading = false;
+            }, this.reloadTime)
         }
     }
 }
