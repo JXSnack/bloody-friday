@@ -11,7 +11,7 @@ export class Gun extends Item {
     private lastShot: number = Date.now();
 
     public readonly fullAmmo: number = 20;
-    private readonly reloadTime: number = 2000;
+    private readonly reloadTime: number = 2500;
     public isReloading: boolean = false;
     public ammo: number = 5;
 
@@ -77,6 +77,8 @@ export class Gun extends Item {
     }
 
     private doReload() {
+        Game.sounds.playReload();
+
         if (!this.isReloading) {
             this.isReloading = true;
             setTimeout(() => {

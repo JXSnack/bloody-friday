@@ -53,20 +53,27 @@ export class BarsOverlay extends UIInterface {
         // items
 
         // gun
-        if (!Game.self!.gun.isReloading) this.renderInventorySlot(ctx, "1", 14, this.gunSource, Game.self!.gun.ammo.toString(), Game.self!.gun.fullAmmo.toString());
-        else this.renderInventorySlot(ctx, "1", 14, this.gunSource, Game.self!.gun.ammo.toString(), Game.self!.gun.fullAmmo.toString(), "Reloading...");
+        let active: boolean = Game.self!.activeItem.typeId == "gun";
+        if (!Game.self!.gun.isReloading) this.renderInventorySlot(ctx, active, "1", 14, this.gunSource, Game.self!.gun.ammo.toString(), Game.self!.gun.fullAmmo.toString());
+        else this.renderInventorySlot(ctx, active, "1", 14, this.gunSource, Game.self!.gun.ammo.toString(), Game.self!.gun.fullAmmo.toString(), "Reloading...");
 
         // water/teacannon
-        this.renderInventorySlot(ctx, "2", 12 + this.itemWidth + this.itemDistance, this.waterCannonSource, "100", "100", "2500 punten")
+        active = Game.self!.activeItem.typeId == "watercannon";
+        this.renderInventorySlot(ctx, active, "2", 12 + this.itemWidth + this.itemDistance, this.waterCannonSource, "100", "100", "2500 punten")
 
         // car bomb
-        this.renderInventorySlot(ctx, "3", 12 + this.itemWidth * 2 + this.itemDistance * 2, this.carBombSource, "Autobom", "Area Damage", "5000 punten");
+        active = Game.self!.activeItem.typeId == "car_bomb";
+        this.renderInventorySlot(ctx, active, "3", 12 + this.itemWidth * 2 + this.itemDistance * 2, this.carBombSource, "Autobom", "Area Damage", "5000 punten");
     }
 
-    private renderInventorySlot(ctx: CanvasRenderingContext2D, number: string, x: number, icon: HTMLImageElement, bigText: string, smallText: string, overlay?: string) {
+    private renderInventorySlot(ctx: CanvasRenderingContext2D, active: boolean, number: string, x: number, icon: HTMLImageElement, bigText: string, smallText: string, overlay?: string) {
         ctx.beginPath();
         ctx.fillStyle = "white";
-        ctx.strokeStyle = "white";
+        ctx.strokeStyle = active ? "white" : "black";
+        ctx.font = "12px monospace"
+        ctx.fillText(number, x + 2, 30);
+
+        ctx.beginPath();
         ctx.roundRect(x - 2, 14, this.itemWidth, this.itemHeight, 4)
         ctx.stroke()
 

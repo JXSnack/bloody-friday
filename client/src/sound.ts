@@ -5,11 +5,13 @@ export class Sounds {
     public shoot?: Audio;
     public miss?: Audio;
     public carCrash?: Audio;
+    public reload?: Audio;
     public hits: Audio[] = [];
 
     async init() {
         await Game.audio.load("shoot", "/shoot", 'mp3');
         await Game.audio.load("miss", "/miss", 'mp3')
+        await Game.audio.load("reload", "/reload", 'mp3')
         await Game.audio.load("carCrash", "/car-crash", 'mp3')
         await Game.audio.load("hit1", "/hit1", 'mp3')
         await Game.audio.load("hit2", "/hit2", 'mp3')
@@ -17,6 +19,7 @@ export class Sounds {
 
         this.shoot = await Game.audio.add("shoot")
         this.miss = await Game.audio.add("miss")
+        this.reload = await Game.audio.add("reload")
         this.carCrash = await Game.audio.add("carCrash")
         this.hits.push(await Game.audio.add("hit1"))
         this.hits.push(await Game.audio.add("hit2"))
@@ -51,6 +54,11 @@ export class Sounds {
         this.carCrash.setVolume(volume);
         this.carCrash.play();
         this.carCrash.isPlaying = false;
+    }
+
+    playReload() {
+        if (!this.reload) return;
+        this.reload.play();
     }
 
     calculateDistanceVolume(pos: Vec, range: number): number {
