@@ -175,6 +175,7 @@ export class Player extends Entity {
     removeMesh() {
         super.removeMesh();
         this.gun.removeMesh();
+        this.carBomb.removeMesh();
     }
 
     applyRecoil(amount: number) {
