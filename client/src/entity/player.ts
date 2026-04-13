@@ -45,6 +45,9 @@ export class Player extends Entity {
     }
 
     update() {
+        if (Game.keys["Digit1"]) this.setActiveItem(this.gun);
+        else if (Game.keys["Digit3"]) this.setActiveItem(this.carBomb);
+
         if (this.mesh == null) return;
         if (Game.self === this) this.handlePlayerControls();
         if (!this.remote) {
