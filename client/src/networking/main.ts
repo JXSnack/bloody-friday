@@ -1,4 +1,4 @@
-import {debug, Game, Team, Vec} from "../util";
+import {debug, Game, Team} from "../util";
 import {handleDeath, handleRespawn, updatePlayer} from "./updatePlayer";
 import {Entity} from "../entity/entity";
 import {handleDamage, handleExplosion, handleKill, handleSomeShot} from "./damage";
@@ -48,6 +48,10 @@ export class NetworkingData {
 
     onServerMessage(data: any) {
         if (data["type"] == "startGame") {
+            if (Game.team == Team.LOYALIST) document.dispatchEvent(new CustomEvent("game:prepare"));
+            else document.dispatchEvent(new CustomEvent("game:start"));
+        } else if (data["type"] == "startLoyalists") {
+            if (Game.team == Team.NATIONALIST) return;
             document.dispatchEvent(new CustomEvent("game:start"));
         } else if (data["type"] == "authDenied") {
             document.dispatchEvent(new CustomEvent("game:authDenied", {detail: {reason: data["reason"]}}));
@@ -57,15 +61,15 @@ export class NetworkingData {
             this.socket.close();
             alert("Je werd gekickt")
             window.location.reload();
+        } else if (data["type"] == "team") {
+            Game.team = data["teamId"];
+            debug("Received team " + Game.team)
         }
 
         if (!Game.started) return;
 
         if (data["type"] == "disconnect") {
             Game.world?.removeEntity(data["uuid"]);
-        } else if (data["type"] == "team") {
-            Game.team = data["teamId"];
-            debug("Received team " + Game.team)
         } else if (data["type"] == "pointsUpdate") {
             Game.nationalistPoints = data["nationalist"];
             Game.loyalistPoints = data["loyalist"];

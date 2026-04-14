@@ -119,14 +119,22 @@ function handleMonitor(ws) {
             started = true;
             console.log("MONITOR SENT START")
             
-            broadcast({"sender": "server", "type": "startGame"})
-            
             // round robin the teams
             let lastTeam = 0;
             for (let client of authedClients) {
                 client.ws.send(JSON.stringify({"sender": "server", "type": "team", "teamId": lastTeam % 2}));
                 lastTeam++;
             }
+            
+            broadcast({"sender": "server", "type": "startGame"})
+        } else if (msg.type === "startFull") {
+            console.log("starting full!")
+            if (!started) {
+                console.log("Canceling start full, because haven't started normally")
+                return;
+            }
+            
+            broadcast({"sender": "server", "type": "startLoyalists"})
         } else if (msg.type === "kick") {
             direct(msg.uuid, {"sender": "server", "type": "kick"});
         }

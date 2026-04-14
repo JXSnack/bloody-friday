@@ -167,6 +167,11 @@
 		<h1>Nog eventjes wachten</h1>
 		<p class="tagline">We wachten tot het spel is gestart</p>
 	</div>
+
+	<div id="preparing" style="display: none">
+		<h1>Daar gaan we! Jij bent een loyalist.</h1>
+		<p>Het andere team krijgt nog <span id="time">30</span>s voorbereidingstijd</p>
+	</div>
 </div>
 
 <div id="monitor" style="display: none">
@@ -183,6 +188,7 @@
 
     function bootUser() {
         let login = document.querySelector("#login");
+        let preparing = document.querySelector("#preparing");
         let waiting = document.querySelector("#wait");
         let playBtn = document.querySelector("#play-btn");
 
@@ -203,7 +209,20 @@
 
         document.addEventListener("game:start", () => {
             mm.setAttribute("style", "display: none");
+            preparing.setAttribute("style", "display: none");
         });
+
+        document.addEventListener("game:prepare", () => {
+            login.setAttribute("style", "display: none");
+            preparing.setAttribute("style", "");
+
+            let seconds = 31;
+            let timer = setInterval(() => {
+                seconds--;
+                document.querySelector("#time").innerHTML = seconds;
+	            if (seconds <= 0) clearInterval(timer);
+            }, 950)
+        })
 
         document.addEventListener("game:authDenied", (e) => {
             let reason = e.detail.reason;
@@ -253,6 +272,10 @@
         startBtn.addEventListener("click", () => {
             ws.send(JSON.stringify({"type": "start"}));
             startBtn.remove();
+
+            setTimeout(() => {
+                ws.send(JSON.stringify({"type": "startFull"}))
+            }, 30 * 1000)
         })
     }
 
