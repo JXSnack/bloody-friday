@@ -24,7 +24,9 @@ export class Gun extends Item {
         super.create();
 
         if (this.owner == Game.self) this.modelOffset = this.modelOffset.withAdd(new Vec(0.15, 0.2, 0))
+    }
 
+    createMesh() {
         this.loadModel("/gun.glb", () => {
             this.model?.scale.set(0.2, 0.2, 0.2);
         })

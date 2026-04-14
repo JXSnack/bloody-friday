@@ -56,7 +56,7 @@ export class MainScene extends Scene3D {
         this.addUI(new DeathOverlay())
         this.addUI(new DevOverlay());
 
-        this.controls = new FirstPersonControls(this.camera, Game.self.mesh, {
+        this.controls = new FirstPersonControls(this.camera, Game.self.mesh!, {
             pointerLock: true,
             offset: new Vec(0, -4, 0).to3()
         });

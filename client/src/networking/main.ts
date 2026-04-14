@@ -1,5 +1,5 @@
 import {debug, Game, Team, Vec} from "../util";
-import {updatePlayer} from "./updatePlayer";
+import {handleDeath, handleRespawn, updatePlayer} from "./updatePlayer";
 import {Entity} from "../entity/entity";
 import {handleDamage, handleExplosion, handleKill, handleSomeShot} from "./damage";
 
@@ -42,6 +42,8 @@ export class NetworkingData {
         else if (type == "kill") handleKill(sender, data);
         else if (type == "someShot") handleSomeShot(sender, data);
         else if (type == "explosion") handleExplosion(sender, data);
+        else if (type == "death") handleDeath(sender, data);
+        else if (type == "respawn") handleRespawn(sender, data);
     }
 
     onServerMessage(data: any) {

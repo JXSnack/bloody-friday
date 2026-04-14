@@ -15,9 +15,9 @@ export async function updatePlayer(sender: string, data: any) {
             entity.name = data["name"];
             Game.world.addEntity(entity);
 
-            entity.mesh.body.setCollisionFlags(2);
-            entity.mesh.body.setVelocity(0, 0, 0);
-            entity.mesh.body.setAngularVelocity(0, 0, 0);
+            entity.mesh!.body.setCollisionFlags(2);
+            entity.mesh!.body.setVelocity(0, 0, 0);
+            entity.mesh!.body.setAngularVelocity(0, 0, 0);
         }
     } else if (data.entityType == "car_bomb_entity") {
         if (rawEntity == undefined) {
@@ -36,4 +36,21 @@ export async function updatePlayer(sender: string, data: any) {
     }
 
     rawEntity.handlePacket(sender, data);
+}
+
+export function handleDeath(sender: string, data: any) {
+    // let entity = Game.world!.getEntity(sender);
+    // if (entity == null || !(entity instanceof Player)) return;
+    //
+    // entity.removeMesh();
+
+    // let's just remove them. quick and dirty
+    Game.world?.removeEntity(sender);
+}
+
+export function handleRespawn(sender: string, data: any) {
+    let entity = Game.world!.getEntity(sender);
+    if (entity == null || !(entity instanceof Player)) return;
+
+    entity.createMesh();
 }

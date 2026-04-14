@@ -12,7 +12,9 @@ export class CarBomb extends Item {
         super.create();
 
         if (Game.self == this.owner) this.modelOffset = this.modelOffset.withAdd(new Vec(0.04, 0.65, 0))
+    }
 
+    createMesh() {
         this.loadModel("carbomb.glb", () => {
             this.model!.scale.set(0.4, 0.4, 0.4);
         })

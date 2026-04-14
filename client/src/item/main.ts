@@ -54,6 +54,8 @@ export abstract class Item {
         });
     }
 
+    createMesh() {}
+
     removeMesh() {
         this.owner.scene.destroy(this.model as ExtendedGroup);
         this.model?.remove();

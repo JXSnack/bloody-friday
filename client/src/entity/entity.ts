@@ -26,7 +26,7 @@ export abstract class Entity {
     public hitboxSize: Vec = new Vec(1, 1, 1);
     public mass: number = 1;
 
-    public mesh!: ExtendedMesh;
+    public mesh?: ExtendedMesh;
     public model?: Group;
     public modelOffset: Vec = Vec.ZERO;
     isLoadingModel: boolean = false;
@@ -53,7 +53,7 @@ export abstract class Entity {
     initMeshStuff() {
         // @ts-ignore
         this.mesh.bloodyFridayEntity = this;
-        if (this.mesh.body) this.mesh.body.on.collision((other: any, event) => {
+        if (this.mesh!.body) this.mesh!.body.on.collision((other: any, event) => {
             if (event == "start") {
                 this.collisions++;
 
@@ -98,12 +98,14 @@ export abstract class Entity {
             cur.z + (this.targetPos.z - cur.z) * this.LERP_FACTOR,
         );
 
-        this.mesh.position.set(lerped.x, lerped.y, lerped.z);
-        if (this.mesh.body) this.mesh.body.needUpdate = true;
-        else {
+        if (this.mesh != null) {
             this.mesh.position.set(lerped.x, lerped.y, lerped.z);
-            this.mesh.updateMatrix();
-            this.mesh.updateMatrixWorld(true);
+            if (this.mesh.body) this.mesh.body.needUpdate = true;
+            else {
+                this.mesh.position.set(lerped.x, lerped.y, lerped.z);
+                this.mesh.updateMatrix();
+                this.mesh.updateMatrixWorld(true);
+            }
         }
 
         if (this.targetRot != null && this.model != null) {
@@ -114,7 +116,10 @@ export abstract class Entity {
     }
 
     setPos(pos: Vec) {
-        if (this.mesh == null) return;
+        if (this.mesh == null) {
+            this.targetPos = pos;
+            return;
+        }
 
         if (this.remote) this.targetPos = pos;
         else {
@@ -166,6 +171,8 @@ export abstract class Entity {
     }
 
     removeMesh() {
+        if (this.mesh == null) return;
+
         Game.world?.physics.destroy(this.mesh);
         Game.world?.destroy(this.mesh);
 
@@ -175,5 +182,9 @@ export abstract class Entity {
         }
 
         this.mesh.remove();
+        this.mesh = undefined;
+        this.model = undefined;
     }
+
+    createMesh() {}
 }

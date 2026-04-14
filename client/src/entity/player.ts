@@ -32,18 +32,10 @@ export class Player extends Entity {
     create() {
         if (Game.self == this) this.name = Game.playerName;
 
-        this.mesh = this.scene.physics.add.capsule(
-            {...new Vec(Math.random() * 5 - 3, 20, Math.random() * 5 - 3), radius: this.hitboxSize.x / 2, length: this.hitboxSize.y, mass: this.mass},
-            {phong: {color: 0xffffff}}
-        );
-
-        this.mesh.body.setAngularFactor(0, 0, 0);
-
-        // lock camera to player
-        this.mesh.visible = false;
-
         this.gun.create();
         this.carBomb.create();
+
+        this.createMesh()
     }
 
     update() {
@@ -117,7 +109,7 @@ export class Player extends Entity {
         }
 
         const hasInput = moveX !== 0 || moveZ !== 0;
-        const current = this.mesh.body.velocity;
+        const current = this.mesh!.body.velocity;
 
         const finalVX = hasInput
             ? current.x + (moveX - current.x) * accel
@@ -129,7 +121,7 @@ export class Player extends Entity {
         this.vel = new Vec(finalVX, this.vel.y, finalVZ);
 
         if (Game.keys["Space"] && this.isColliding()) {
-            this.mesh.body.setVelocityY(12 * (1 / this.mass));
+            this.mesh!.body.setVelocityY(12 * (1 / this.mass));
         }
 
         this.tryStepUp();
@@ -139,7 +131,7 @@ export class Player extends Entity {
         const MAX_STEP = 0.5;
         const STEP_PUSH = 4;
 
-        const vel = this.mesh.body.velocity;
+        const vel = this.mesh!.body.velocity;
         const horizSpeed = Math.sqrt(vel.x * vel.x + vel.z * vel.z);
 
         if (horizSpeed < 0.5 || vel.y > 0.5) return;
@@ -172,7 +164,7 @@ export class Player extends Entity {
         const stepHeight = downHits[0].point.y - footY;
 
         if (stepHeight > 0.05 && stepHeight <= MAX_STEP) {
-            this.mesh.body.setVelocityY(STEP_PUSH);
+            this.mesh!.body.setVelocityY(STEP_PUSH);
         }
     }
 
@@ -188,6 +180,24 @@ export class Player extends Entity {
 
         if (this.activeItem.model) this.activeItem.model.visible = false;
         this.activeItem = item;
+    }
+
+    createMesh() {
+        if (this.mesh != null) return;
+
+        debug(`created mesh for ${this.remote ? "remote" : "self"}`)
+        this.mesh = this.scene.physics.add.capsule(
+            {...new Vec(Math.random() * 5 - 3, 20, Math.random() * 5 - 3), radius: this.hitboxSize.x / 2, length: this.hitboxSize.y, mass: this.mass},
+            {phong: {color: 0xffffff}}
+        );
+
+        this.mesh.body.setAngularFactor(0, 0, 0);
+
+        // lock camera to player
+        this.mesh.visible = false;
+
+        this.gun.createMesh();
+        this.carBomb.createMesh();
     }
 
     removeMesh() {
@@ -215,13 +225,20 @@ export class Player extends Entity {
     handleDeath() {
         if (this.lastDamage) {
             Game.networking.sendDirect(this.uuid, this.lastDamage, {"type": "kill"})
+            Game.networking.send(this.uuid, {"type": "death"})
+
+            if (!this.remote) this.removeMesh();
         }
     }
 
     respawn() {
+        Game.networking.send(this.uuid, {"type": "respawn"})
+
         this.isDead = false;
         this.health = this.maxHealth;
         this.setPos({ x: 0, y: 5, z: 0 } as any);
+
+        if (!this.remote) this.createMesh();
     }
 
     makePacket(): any {
