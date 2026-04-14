@@ -118,6 +118,9 @@ export abstract class Entity {
 
         if (this.remote) this.targetPos = pos;
         else {
+            this.mesh.body.position.x = pos.x;
+            this.mesh.body.position.y = pos.y;
+            this.mesh.body.position.z = pos.z;
             this.mesh.position.set(pos.x, pos.y, pos.z);
             this.mesh.body.needUpdate = true;
         }
