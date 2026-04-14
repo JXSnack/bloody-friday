@@ -149,11 +149,17 @@
     let playBtn = document.querySelector("#play-btn");
 
     playBtn.addEventListener("click", () => {
+        let uname = document.getElementById("username").value;
+        uname = uname.replace(/^\s+|\s+$/g, "");
+
+        if (uname.length < 3) {
+            document.querySelector("#name-error").innerText = "Naam is te kort";
+            return;
+        }
+
         login.setAttribute("hidden", "");
         waiting.removeAttribute("hidden");
 
-        let uname = document.getElementById("username").value;
-        uname = uname.replace(/^\s+|\s+$/g, "");
         document.dispatchEvent(new CustomEvent("game:init", {detail: {username: uname}}));
     });
 
