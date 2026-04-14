@@ -24,12 +24,19 @@ wss.on('connection', (ws) => {
     let authed = false;
     let self = null;
     
+    ws.send(JSON.stringify({"sender": "server", "type": "hello"}))
+    
     ws.on('message', (message) => {
         if (isMonitor) return;
         if (!authed) {
             if (message.toString() === "MONITOR") {
                 isMonitor = true;
                 handleMonitor(ws);
+                return;
+            }
+            
+            if (monitor == null) {
+                ws.send(JSON.stringify({"sender": "server", "type": "authDenied", "reason": "Het spel is nog niet geopend. Probeer het zometeen nog een keer"}))
                 return;
             }
             
@@ -111,7 +118,7 @@ wss.on('connection', (ws) => {
 
 function handleMonitor(ws) {
     console.log("monitor handler")
-    monitor = {};
+    monitor = {ws: ws};
     
     ws.on("message", (message) => {
         if (message.toString() === "start") {

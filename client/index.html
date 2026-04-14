@@ -90,7 +90,7 @@
             letter-spacing: .04em;
         }
 
-        .form button {
+        button {
             width: 100%;
             padding: 13px;
             background: #c0160f;
@@ -106,18 +106,45 @@
             transition: background .15s, transform .1s;
         }
 
-        .form button:hover {
+        button:hover {
             background: #de1a11;
         }
 
-        .form button:active {
+        button:active {
             transform: scale(.98);
         }
 
-        #not-opened {
-	        display: flex;
-	        flex-direction: column;
-	        align-items: center;
+        #monitor {
+            align-items: center;
+	        text-align: center;
+        }
+
+        #monitor > h1 {
+            font-size: 64px;
+        }
+
+        #members {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+
+	        justify-content: center;
+	        max-width: 700px;
+        }
+
+        #members p {
+            background-color: white;
+            color: black;
+            padding: 5px 10px;
+
+            cursor: pointer;
+            transition: 0.1s;
+	        margin: 0;
+        }
+
+        #members p:hover {
+            text-decoration: line-through;
+            transform: scale(1.1);
         }
 	</style>
 </head>
@@ -145,7 +172,9 @@
 <div id="monitor" style="display: none">
 	<h1>friday.snackbag.net</h1>
 
-	<button id="m-start">Start</button>
+	<div id="members"></div>
+
+	<button id="m-start" style="position: absolute; bottom: 15px; right: 15px; width: 150px">Start</button>
 </div>
 
 <script type="text/javascript">
@@ -173,7 +202,7 @@
         });
 
         document.addEventListener("game:start", () => {
-            mm.setAttribute("styles", "display: none");
+            mm.setAttribute("style", "display: none");
         });
 
         document.addEventListener("game:authDenied", (e) => {
@@ -184,9 +213,15 @@
     }
 
     function bootMonitor() {
+        let pass = prompt("password")
+        if (pass !== "croissant") {
+            document.body.innerHTML = "";
+            return;
+        }
+
         let startBtn = document.querySelector("#m-start");
 
-		mm.setAttribute("style", "display: none");
+        mm.setAttribute("style", "display: none");
         mon.setAttribute("style", "");
 
         let ws = new WebSocket(`${window.location.protocol === "https:" ? "wss://friday.snackbag.net/ws/" : "ws://127.0.0.1:5174/"}}`);
@@ -199,8 +234,8 @@
         })
     }
 
-    if (location.hash === "#IllIIlMONlTORI") bootMonitor();
-	else bootUser();
+    if (location.hash === "#monitor") bootMonitor();
+    else bootUser();
 </script>
 
 </body>

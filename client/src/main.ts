@@ -6,11 +6,13 @@ Game.sounds.init();
 
 // @ts-ignore
 document.addEventListener("game:init", (e: CustomEvent) => {
+    console.log("received game:init")
     Game.playerName = e.detail.username;
     Game.networking.init();
 })
 
 document.addEventListener("game:start", () => {
+    console.log("received game:start")
     Game.started = true;
     document.addEventListener("keydown", (e) => (Game.keys[e.code] = true));
     document.addEventListener("keyup", (e) => (Game.keys[e.code] = false));

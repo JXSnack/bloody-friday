@@ -5,19 +5,18 @@ import {handleDamage, handleExplosion, handleKill, handleSomeShot} from "./damag
 
 export class NetworkingData {
     public readonly clientId = crypto.randomUUID();
-    private readonly baseURL: string = `${window.location.protocol == "https:" ? "wss://friday.snackbag.net/ws/" : "ws://127.0.0.1:5174/"}}`;
-    public readonly socket = new WebSocket(this.baseURL)
+    private readonly baseURL: string = `${window.location.protocol == "https:" ? "wss://friday.snackbag.net/ws/" : "ws://127.0.0.1:5174/"}`;
+    public socket!: WebSocket;
 
     init() {
+        this.socket = new WebSocket(this.baseURL);
         this.socket.onopen = () => this.onSocketOpen();
         this.socket.onmessage = (event) => this.onSocketMessage(event);
-
-        console.log("authorizing...");
-        this.socket.send(`${this.clientId}:::${Game.playerName}`);
     }
 
     onSocketOpen() {
-        console.log("socket open??/")
+        console.log("authorizing...");
+        this.socket.send(`${this.clientId}:::${Game.playerName}`);
     }
 
     onSocketMessage(event: MessageEvent) {
@@ -50,6 +49,8 @@ export class NetworkingData {
             document.dispatchEvent(new CustomEvent("game:start"));
         } else if (data["type"] == "authDenied") {
             document.dispatchEvent(new CustomEvent("game:authDenied", {detail: {reason: data["reason"]}}));
+        } else if (data["type"] == "hello") {
+            console.log("received hello event")
         }
 
         if (!Game.started) return;
