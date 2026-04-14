@@ -8,6 +8,7 @@ import {DevOverlay} from "../hud/devOverlay";
 import {BarsOverlay} from "../hud/bars";
 import {HitConfirmOverlay} from "../hud/hitConfirm";
 import {KillOverlay} from "../hud/killOverlay";
+import {DeathOverlay} from "../hud/death";
 
 export class MainScene extends Scene3D {
     private entities: Record<string, Entity> = {};
@@ -52,6 +53,7 @@ export class MainScene extends Scene3D {
         this.addUI(HitConfirmOverlay.INSTANCE);
         this.addUI(KillOverlay.INSTANCE);
         this.addUI(new BarsOverlay());
+        this.addUI(new DeathOverlay())
         this.addUI(new DevOverlay());
 
         this.controls = new FirstPersonControls(this.camera, Game.self.mesh, {
@@ -62,6 +64,7 @@ export class MainScene extends Scene3D {
         document.addEventListener("click", () => {
             document.body.requestPointerLock();
 
+            if (Game.self?.isDead) return;
             Game.self?.activeItem.use();
         });
 
@@ -87,7 +90,7 @@ export class MainScene extends Scene3D {
         }
 
         // mouse deltas
-        this.controls?.update(this.mouseX, this.mouseY);
+        if (!Game.self?.isDead) this.controls?.update(this.mouseX, this.mouseY);
         this.mouseX = 0;
         this.mouseY = 0;
 

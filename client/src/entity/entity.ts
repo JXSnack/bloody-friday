@@ -40,7 +40,6 @@ export abstract class Entity {
             this.model.scale.set(1, 1, 1);
             this.model.position.set(this.modelOffset.x, this.modelOffset.y, this.modelOffset.z);
             this.scene.add.existing(this.model);
-            debug("applied model to " + this.uuid);
             then();
         }).catch((err) => {
             debug("FAILED to load model check console");

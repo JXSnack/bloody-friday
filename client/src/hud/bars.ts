@@ -32,6 +32,8 @@ export class BarsOverlay extends UIInterface {
     }
 
     private drawHealthBar(ctx: CanvasRenderingContext2D) {
+        if (Game.self?.isDead) return;
+
         // background
         ctx.beginPath();
         ctx.fillStyle = "rgba(0, 0, 0, 0.6)";

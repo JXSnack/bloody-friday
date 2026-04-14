@@ -47,7 +47,7 @@ export class Player extends Entity {
     }
 
     update() {
-        if (!this.remote) {
+        if (!this.remote && !this.isDead) {
             if (Game.keys["Digit1"]) this.setActiveItem(this.gun.typeId);
             else if (Game.keys["Digit3"]) this.setActiveItem(this.carBomb.typeId);
         }
@@ -85,6 +85,8 @@ export class Player extends Entity {
     }
 
     private handlePlayerControls() {
+        if (this.isDead) return;
+
         const maxSpeed = Game.keys["ShiftLeft"] ? 12 : 5;
         const accel = 0.2;
         const friction = 0.15;
@@ -214,6 +216,12 @@ export class Player extends Entity {
         if (this.lastDamage) {
             Game.networking.sendDirect(this.uuid, this.lastDamage, {"type": "kill"})
         }
+    }
+
+    respawn() {
+        this.isDead = false;
+        this.health = this.maxHealth;
+        this.setPos({ x: 0, y: 5, z: 0 } as any);
     }
 
     makePacket(): any {

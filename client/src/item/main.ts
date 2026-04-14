@@ -46,7 +46,6 @@ export abstract class Item {
             this.model.position.set(this.modelOffset.x, this.modelOffset.y, this.modelOffset.z);
             Game.world!.add.existing(this.model);
             this.model.visible = false;
-            debug("applied item model to " + this.typeId);
             then();
         }).catch((err) => {
             debug("FAILED to load item model check console");
