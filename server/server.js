@@ -14,7 +14,6 @@ class Client {
 }
 
 const wss = new WebSocket.Server({ port: 5174 })
-let lastTeam = 0;
 let nationalistPoints = 0;
 let loyalistPoints = 0;
 
@@ -58,11 +57,7 @@ wss.on('connection', (ws) => {
             console.log("authed " + JSON.stringify(self));
             console.log(authedClients)
             
-            // set team
-            ws.send(JSON.stringify({"sender": "server", "type": "team", "teamId": lastTeam % 2}))
             monitor.ws.send(JSON.stringify({"sender": "server", "type": "join", "name": name, "uuid": uuid}))
-            lastTeam++;
-            
             return;
         }
         
@@ -123,7 +118,15 @@ function handleMonitor(ws) {
         if (msg.type === "start") {
             started = true;
             console.log("MONITOR SENT START")
+            
             broadcast({"sender": "server", "type": "startGame"})
+            
+            // round robin the teams
+            let lastTeam = 0;
+            for (let client of authedClients) {
+                client.ws.send(JSON.stringify({"sender": "server", "type": "team", "teamId": lastTeam % 2}));
+                lastTeam++;
+            }
         } else if (msg.type === "kick") {
             direct(msg.uuid, {"sender": "server", "type": "kick"});
         }
