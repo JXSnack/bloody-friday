@@ -2,6 +2,7 @@ const WebSocket = require('ws')
 
 const authedClients = []
 let monitor = null;
+let started = false;
 
 class Client {
     constructor(uuid, name, authDate, ws) {
@@ -29,6 +30,11 @@ wss.on('connection', (ws) => {
             if (message.toString() === "MONITOR") {
                 isMonitor = true;
                 handleMonitor(ws);
+                return;
+            }
+            
+            if (started) {
+                ws.send(JSON.stringify({"sender": "server", "type": "authDenied", "reason": "Het spel is al begonnen, je kunt er helaas niet meer bij"}));
                 return;
             }
             
@@ -109,6 +115,7 @@ function handleMonitor(ws) {
     
     ws.on("message", (message) => {
         if (message.toString() === "start") {
+            started = true;
             console.log("MONITOR SENT START")
             broadcast({"sender": "server", "type": "startGame"})
         }
