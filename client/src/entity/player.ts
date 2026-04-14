@@ -47,8 +47,10 @@ export class Player extends Entity {
     }
 
     update() {
-        if (Game.keys["Digit1"]) this.setActiveItem(this.gun);
-        else if (Game.keys["Digit3"]) this.setActiveItem(this.carBomb);
+        if (!this.remote) {
+            if (Game.keys["Digit1"]) this.setActiveItem(this.gun.typeId);
+            else if (Game.keys["Digit3"]) this.setActiveItem(this.carBomb.typeId);
+        }
 
         if (this.mesh == null) return;
         if (Game.self === this) this.handlePlayerControls();
@@ -172,7 +174,16 @@ export class Player extends Entity {
         }
     }
 
-    setActiveItem(item: Item) {
+    setActiveItem(itemId: string) {
+        let item;
+
+        if (itemId == "gun") item = this.gun;
+        else if (itemId == "car_bomb") item = this.carBomb;
+        else {
+            alert("oops");
+            return;
+        }
+
         if (this.activeItem.model) this.activeItem.model.visible = false;
         this.activeItem = item;
     }
@@ -210,6 +221,7 @@ export class Player extends Entity {
 
         if (Game.team != undefined) packet["team"] = Game.team;
         packet["name"] = this.name;
+        packet["item"] = this.activeItem.typeId;
 
         return packet;
     }
@@ -235,5 +247,8 @@ export class Player extends Entity {
                 }
             });
         }
+
+        let datItem = data["item"];
+        this.setActiveItem(datItem);
     }
 }
