@@ -3,8 +3,9 @@ const WebSocket = require('ws')
 const authedClients = []
 
 class Client {
-    constructor(uuid, authDate, ws) {
+    constructor(uuid, name, authDate, ws) {
         this.uuid = uuid;
+        this.name = name;
         this.authDate = authDate;
         this.ws = ws;
     }
@@ -22,7 +23,14 @@ wss.on('connection', (ws) => {
     
     ws.on('message', (message) => {
         if (!authed) {
-            self = new Client(message.toString(), new Date(), ws);
+            let uuid = message.toString().split(":::")[0];
+            let name = message.toString().split(":::")[1];
+            if (isNameUsed(name)) {
+                ws.send(JSON.stringify({"sender": "server", "type": "authDenied", "reason": "Naam is al in gebruik"}))
+                return;
+            }
+            
+            self = new Client(uuid, name, new Date(), ws);
             authedClients.push(self);
             authed = true;
             console.log("authed " + JSON.stringify(self));
@@ -91,6 +99,14 @@ function broadcast(message) {
             client.send(JSON.stringify(message))
         }
     })
+}
+
+function isNameUsed(name) {
+    for (let client of authedClients) {
+        if (client.name.toLowerCase() === name.toLowerCase()) return true;
+    }
+    
+    return false;
 }
 
 console.log("running on ws://127.0.0.1:5174")

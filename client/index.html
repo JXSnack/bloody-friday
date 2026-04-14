@@ -5,16 +5,168 @@
 	<title>Bloody Friday</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap"
+	      rel="stylesheet">
 
 	<style>
-		html, body {
-			padding: 0;
-			margin: 0;
-		}
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a0a;
+            color: #fff;
+            font-family: Inter, sans-serif;
+        }
+
+        #mm {
+            display: flex;
+            flex-direction: column;
+
+            align-items: center;
+            text-align: center;
+        }
+
+        #title {
+            margin: 0;
+            font-size: clamp(72px, 13vw, 130px);
+            line-height: 0.94;
+            letter-spacing: .04em;
+            font-family: "Bebas Neue", sans-serif;
+        }
+
+        #title > span {
+            color: #c0160f;
+        }
+
+        .tagline {
+            font-size: 11px;
+            letter-spacing: .28em;
+            text-transform: uppercase;
+            color: #7a7a7a;
+            margin: 8px 0 48px;
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .form input {
+            width: 100%;
+            padding: 13px 18px;
+            background: #141414;
+            border: 1px solid #222;
+            border-radius: 4px;
+            color: #e8e8e8;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            outline: none;
+            text-align: center;
+            transition: border-color .15s;
+        }
+
+        .form input::placeholder {
+            color: #363636;
+        }
+
+        .form input:focus {
+            border-color: #7a0c08;
+        }
+
+        #name-error {
+            font-size: 11px;
+            color: #c0160f;
+            height: 14px;
+            letter-spacing: .04em;
+        }
+
+        .form button {
+            width: 100%;
+            padding: 13px;
+            background: #c0160f;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background .15s, transform .1s;
+        }
+
+        .form button:hover {
+            background: #de1a11;
+        }
+
+        .form button:active {
+            transform: scale(.98);
+        }
+
+        #not-opened {
+	        display: flex;
+	        flex-direction: column;
+	        align-items: center;
+        }
 	</style>
 </head>
 <body>
-<script type="module" src="/src/main.ts"></script>
+
+<div id="mm">
+	<div id="login">
+		<h1 id="title">BLOODY<br/><span>FRIDAY</span></h1>
+		<p class="tagline">wat als het niet uitkwam?</p>
+		<div class="form">
+			<input id="username" type="text" placeholder="Voer je naam in" minlength="3" maxlength="32"
+			       autocomplete="off"
+			       spellcheck="false"/>
+			<p id="name-error"></p>
+			<button id="play-btn">Ik ben bereid!</button>
+		</div>
+	</div>
+
+	<div id="wait" hidden>
+		<h1>Nog eventjes wachten</h1>
+		<p class="tagline">We wachten tot het spel is gestart</p>
+	</div>
+</div>
+
+<script type="text/javascript">
+    let mm = document.querySelector("#mm");
+    let login = document.querySelector("#login");
+    let waiting = document.querySelector("#wait");
+    let playBtn = document.querySelector("#play-btn");
+
+    playBtn.addEventListener("click", () => {
+        login.setAttribute("hidden", "");
+        waiting.removeAttribute("hidden");
+
+        let uname = document.getElementById("username").value;
+        uname = uname.replace(/^\s+|\s+$/g, "");
+        document.dispatchEvent(new CustomEvent("game:init", {detail: {username: uname}}));
+    });
+
+    document.addEventListener("game:start", () => {
+        mm.setAttribute("styles", "display: none");
+    });
+
+    document.addEventListener("game:authDenied", (e) => {
+        let reason = e.detail.reason;
+        alert(reason);
+        window.location.reload();
+    });
+</script>
+
 </body>
 </html>

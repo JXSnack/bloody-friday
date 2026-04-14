@@ -94,12 +94,14 @@ class GameInstance {
     public keys: Record<string, boolean> = {};
     public networking: NetworkingData = new NetworkingData();
 
+    public started: boolean = false;
     public self: Player | null = null;
     public world: MainScene | null = null;
     public hud: FLAT.FlatArea | null = null;
     public audio: AudioManager = new AudioManager();
     public sounds: Sounds = new Sounds();
 
+    public playerName!: string;
     public loyalistPoints: number = 0;
     public nationalistPoints: number = 0;
     public team?: Team;

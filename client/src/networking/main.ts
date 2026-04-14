@@ -11,11 +11,13 @@ export class NetworkingData {
     init() {
         this.socket.onopen = () => this.onSocketOpen();
         this.socket.onmessage = (event) => this.onSocketMessage(event);
+
+        console.log("authorizing...");
+        this.socket.send(`${this.clientId}:::${Game.playerName}`);
     }
 
     onSocketOpen() {
-        console.log("authorizing...");
-        this.socket.send(this.clientId);
+        console.log("socket open??/")
     }
 
     onSocketMessage(event: MessageEvent) {
@@ -26,6 +28,7 @@ export class NetworkingData {
             this.onServerMessage(data);
             return;
         }
+        if (!Game.started) return;
         if (Game.self == null || Game.world == null) return;
 
         if (sender == Game.self.uuid) return;
@@ -43,6 +46,14 @@ export class NetworkingData {
     }
 
     onServerMessage(data: any) {
+        if (data["type"] == "startGame") {
+            document.dispatchEvent(new CustomEvent("game:start"));
+        } else if (data["type"] == "authDenied") {
+            document.dispatchEvent(new CustomEvent("game:authDenied", {detail: {reason: data["reason"]}}));
+        }
+
+        if (!Game.started) return;
+
         if (data["type"] == "disconnect") {
             Game.world?.removeEntity(data["uuid"]);
         } else if (data["type"] == "team") {
