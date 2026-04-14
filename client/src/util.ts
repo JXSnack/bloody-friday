@@ -127,6 +127,7 @@ class GameInstance {
 
     async getOrLoadModel(path: string): Promise<Group> {
         if (!this.modelCachePromises[path]) {
+            debug("loading new model " + path);
             this.modelCachePromises[path] = new Promise((resolve, reject) => {
                 new GLTFLoader().load(path, resolve, undefined, reject);
             });
