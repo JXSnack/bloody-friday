@@ -60,6 +60,7 @@ wss.on('connection', (ws) => {
             
             // set team
             ws.send(JSON.stringify({"sender": "server", "type": "team", "teamId": lastTeam % 2}))
+            monitor.ws.send(JSON.stringify({"sender": "server", "type": "join", "name": name, "uuid": uuid}))
             lastTeam++;
             
             return;
@@ -94,12 +95,7 @@ wss.on('connection', (ws) => {
                 return;
             }
             
-            for (let client of authedClients) {
-                if (client.uuid === target) {
-                    client.ws.send(message.toString())
-                    console.log("sent direct message")
-                }
-            }
+            direct(target, data);
         } else {
             console.log("received incorrect msgType: " + msgType)
         }
@@ -121,10 +117,15 @@ function handleMonitor(ws) {
     monitor = {ws: ws};
     
     ws.on("message", (message) => {
-        if (message.toString() === "start") {
+        let msg = JSON.parse(message.toString());
+        console.log("monitor: " + message)
+        
+        if (msg.type === "start") {
             started = true;
             console.log("MONITOR SENT START")
             broadcast({"sender": "server", "type": "startGame"})
+        } else if (msg.type === "kick") {
+            direct(msg.uuid, {"sender": "server", "type": "kick"});
         }
     })
     
@@ -140,6 +141,15 @@ function broadcast(message) {
             client.send(JSON.stringify(message))
         }
     })
+}
+
+function direct(target, message) {
+    for (let client of authedClients) {
+        if (client.uuid === target) {
+            client.ws.send(JSON.stringify(message))
+            console.log(`Sent DM (${message.sender} -> ${target})`)
+        }
+    }
 }
 
 function isNameUsed(name) {

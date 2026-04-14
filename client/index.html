@@ -220,6 +220,7 @@
         }
 
         let startBtn = document.querySelector("#m-start");
+        let members = document.querySelector("#members");
 
         mm.setAttribute("style", "display: none");
         mon.setAttribute("style", "");
@@ -229,8 +230,29 @@
             ws.send("MONITOR");
         }
 
+        ws.onmessage = (message) => {
+            let msg = JSON.parse(message.data);
+            console.log(msg)
+
+	        if (msg.sender === "server") {
+                if (msg.type === "join") {
+                    let p = document.createElement("p");
+                    p.innerText = msg.name;
+                    p.id = msg.uuid;
+                    p.onclick = () => {
+                        ws.send(JSON.stringify({"type": "kick", "uuid": msg.uuid}));
+                    }
+                    members.append(p);
+                } else if (msg.type === "disconnect") {
+                    let p = document.getElementById(msg.uuid);
+                    p.remove();
+                }
+            }
+        }
+
         startBtn.addEventListener("click", () => {
-            ws.send("start");
+            ws.send(JSON.stringify({"type": "start"}));
+            startBtn.remove();
         })
     }
 

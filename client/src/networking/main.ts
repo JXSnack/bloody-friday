@@ -51,6 +51,10 @@ export class NetworkingData {
             document.dispatchEvent(new CustomEvent("game:authDenied", {detail: {reason: data["reason"]}}));
         } else if (data["type"] == "hello") {
             console.log("received hello event")
+        } else if (data["type"] == "kick") {
+            this.socket.close();
+            alert("Je werd gekickt")
+            window.location.reload();
         }
 
         if (!Game.started) return;
