@@ -27,6 +27,7 @@ export class Player extends Entity {
         super("player", scene);
         this.mass = 2;
         this.hitboxSize = new Vec(0.7, 2, 0.7);
+        this.targetPos = new Vec(Math.random() * 5 - 3, 20, Math.random() * 5 - 3);
     }
 
     create() {
@@ -187,7 +188,7 @@ export class Player extends Entity {
 
         debug(`created mesh for ${this.remote ? "remote" : "self"}`)
         this.mesh = this.scene.physics.add.capsule(
-            {...new Vec(Math.random() * 5 - 3, 20, Math.random() * 5 - 3), radius: this.hitboxSize.x / 2, length: this.hitboxSize.y, mass: this.mass},
+            {...this.targetPos, radius: this.hitboxSize.x / 2, length: this.hitboxSize.y, mass: this.mass},
             {phong: {color: 0xffffff}}
         );
 

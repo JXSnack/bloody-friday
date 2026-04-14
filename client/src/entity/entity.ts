@@ -19,7 +19,7 @@ export abstract class Entity {
     public collisions: number = 0;
     public remote: boolean = false;
 
-    private targetPos: Vec | null = null;
+    public targetPos: Vec | null = null;
     public targetRot: Vec | null = null;
     public vel: Vec = Vec.ZERO;
     public stopMessingWithVelocity: boolean = false;
