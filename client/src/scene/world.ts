@@ -9,6 +9,7 @@ import {BarsOverlay} from "../hud/bars";
 import {HitConfirmOverlay} from "../hud/hitConfirm";
 import {KillOverlay} from "../hud/killOverlay";
 import {DeathOverlay} from "../hud/death";
+import {Airplane} from "../entity/airplane";
 
 export class MainScene extends Scene3D {
     private entities: Record<string, Entity> = {};
@@ -82,6 +83,11 @@ export class MainScene extends Scene3D {
             cam.aspect = window.innerWidth / window.innerHeight;
             this.camera.updateProjectionMatrix();
         }
+
+        setTimeout(() => {
+            debug("ADDING AIRPLANE!!!!!!")
+            this.addEntity(new Airplane());
+        }, 5000)
     }
 
     update() {

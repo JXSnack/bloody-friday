@@ -59,7 +59,7 @@ export class Gun extends Item {
 
             // walk up the parent chain since the stamped mesh may be a parent
             while (obj != null) {
-                if (obj.bloodyFridayEntity) {
+                if (obj.bloodyFridayEntity && obj.bloodyFridayEntity instanceof Player) {
                     const entity: Player = obj.bloodyFridayEntity;
 
                     let damage = 5 + Math.random() * 5;

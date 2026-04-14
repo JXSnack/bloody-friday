@@ -135,6 +135,8 @@ function handleMonitor(ws) {
     ws.on('close', () => {
         monitor = null;
         console.log("monitor cleared")
+        broadcast({"sender": "server", "type": "kick"})
+        started = false;
     });
 }
 
