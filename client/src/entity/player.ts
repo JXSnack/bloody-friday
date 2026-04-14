@@ -30,6 +30,8 @@ export class Player extends Entity {
     }
 
     create() {
+        if (Game.self == this) this.name = Game.playerName;
+
         this.mesh = this.scene.physics.add.capsule(
             {...new Vec(Math.random() * 5 - 3, 20, Math.random() * 5 - 3), radius: this.hitboxSize.x / 2, length: this.hitboxSize.y, mass: this.mass},
             {phong: {color: 0xffffff}}
