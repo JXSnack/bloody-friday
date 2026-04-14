@@ -1,6 +1,7 @@
 const WebSocket = require('ws')
 
 const authedClients = []
+let monitor = null;
 
 class Client {
     constructor(uuid, name, authDate, ws) {
@@ -18,11 +19,19 @@ let loyalistPoints = 0;
 
 wss.on('connection', (ws) => {
     console.log("client connected")
+    let isMonitor = false;
     let authed = false;
     let self = null;
     
     ws.on('message', (message) => {
+        if (isMonitor) return;
         if (!authed) {
+            if (message.toString() === "MONITOR") {
+                isMonitor = true;
+                handleMonitor(ws);
+                return;
+            }
+            
             let uuid = message.toString().split(":::")[0];
             let name = message.toString().split(":::")[1];
             if (isNameUsed(name)) {
@@ -84,6 +93,7 @@ wss.on('connection', (ws) => {
     })
     
     ws.on('close', () => {
+        if (isMonitor) return;
         console.log("client disconnected")
         
         if (!authed) return;
@@ -92,6 +102,23 @@ wss.on('connection', (ws) => {
         broadcast({"sender": "server", "type": "disconnect", "uuid": self.uuid})
     })
 })
+
+function handleMonitor(ws) {
+    console.log("monitor handler")
+    monitor = {};
+    
+    ws.on("message", (message) => {
+        if (message.toString() === "start") {
+            console.log("MONITOR SENT START")
+            broadcast({"sender": "server", "type": "startGame"})
+        }
+    })
+    
+    ws.on('close', () => {
+        monitor = null;
+        console.log("monitor cleared")
+    });
+}
 
 function broadcast(message) {
     wss.clients.forEach((client) => {
