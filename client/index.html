@@ -232,9 +232,9 @@
 
         ws.onmessage = (message) => {
             let msg = JSON.parse(message.data);
-            console.log(msg)
 
 	        if (msg.sender === "server") {
+                console.log(msg)
                 if (msg.type === "join") {
                     let p = document.createElement("p");
                     p.innerText = msg.name;
