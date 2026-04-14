@@ -1,7 +1,8 @@
 import {debug, Game, Team} from "../util";
-import {handleDeath, handleRespawn, updatePlayer} from "./updatePlayer";
+import {handleDeath, handleLoyalistsSpawn, handleRespawn, updatePlayer} from "./updatePlayer";
 import {Entity} from "../entity/entity";
 import {handleDamage, handleExplosion, handleKill, handleSomeShot} from "./damage";
+import {Airplane} from "../entity/airplane";
 
 export class NetworkingData {
     public readonly clientId = crypto.randomUUID();
@@ -51,8 +52,8 @@ export class NetworkingData {
             if (Game.team == Team.LOYALIST) document.dispatchEvent(new CustomEvent("game:prepare"));
             else document.dispatchEvent(new CustomEvent("game:start"));
         } else if (data["type"] == "startLoyalists") {
-            if (Game.team == Team.NATIONALIST) return;
-            document.dispatchEvent(new CustomEvent("game:start"));
+            if (Game.team == Team.LOYALIST) document.dispatchEvent(new CustomEvent("game:start"));
+            handleLoyalistsSpawn(data)
         } else if (data["type"] == "authDenied") {
             document.dispatchEvent(new CustomEvent("game:authDenied", {detail: {reason: data["reason"]}}));
         } else if (data["type"] == "hello") {

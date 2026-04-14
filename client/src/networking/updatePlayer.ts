@@ -54,3 +54,10 @@ export function handleRespawn(sender: string, data: any) {
 
     entity.createMesh();
 }
+
+export async function handleLoyalistsSpawn(data: any) {
+    if (Game.team == Team.NATIONALIST) {
+        const {Airplane} = await import("../entity/airplane")
+        Game.world!.addEntity(new Airplane())
+    }
+}

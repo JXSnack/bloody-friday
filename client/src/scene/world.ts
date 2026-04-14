@@ -1,7 +1,7 @@
 import {ExtendedGroup, FirstPersonControls, FLAT, Scene3D, THREE} from "enable3d";
 import {Entity} from "../entity/entity";
 import {Player} from "../entity/player"
-import {debug, Game, Vec} from "../util";
+import {debug, Game, Team, Vec} from "../util";
 import {OrthographicCamera, PerspectiveCamera} from "three";
 import {UIInterface} from "../hud/main";
 import {DevOverlay} from "../hud/devOverlay";
@@ -26,6 +26,7 @@ export class MainScene extends Scene3D {
 
     async create() {
         Game.world = this;
+        this.camera.position.set(0, 0, 0);
 
         await this.warpSpeed("-ground", "-orbitControls");
 
@@ -45,7 +46,7 @@ export class MainScene extends Scene3D {
 
         Game.self = new Player(this);
         Game.self.uuid = Game.networking.clientId;
-        this.addEntity(Game.self);
+        if (Game.team == Team.NATIONALIST) this.addEntity(Game.self);
 
         Game.hud = FLAT.init(this.renderer)
         FLAT.initEvents(this)
@@ -57,10 +58,8 @@ export class MainScene extends Scene3D {
         this.addUI(new DeathOverlay())
         this.addUI(new DevOverlay());
 
-        this.controls = new FirstPersonControls(this.camera, Game.self.mesh!, {
-            pointerLock: true,
-            offset: new Vec(0, -4, 0).to3()
-        });
+        if (Game.team == Team.NATIONALIST) this.setupControls();
+        else this.addEntity(new Airplane())
 
         document.addEventListener("click", () => {
             document.body.requestPointerLock();
@@ -83,11 +82,13 @@ export class MainScene extends Scene3D {
             cam.aspect = window.innerWidth / window.innerHeight;
             this.camera.updateProjectionMatrix();
         }
+    }
 
-        setTimeout(() => {
-            debug("ADDING AIRPLANE!!!!!!")
-            this.addEntity(new Airplane());
-        }, 5000)
+    setupControls() {
+        this.controls = new FirstPersonControls(this.camera, Game.self!.mesh!, {
+            pointerLock: true,
+            offset: new Vec(0, -4, 0).to3()
+        });
     }
 
     update() {
