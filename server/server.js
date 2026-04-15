@@ -1,6 +1,9 @@
 const WebSocket = require('ws')
 
+const FAST_MODE = true;
+
 const authedClients = []
+let lastTeam = 0;
 let monitor = null;
 let started = false;
 
@@ -10,6 +13,7 @@ class Client {
         this.name = name;
         this.authDate = authDate;
         this.ws = ws;
+        this.wasStarted = false;
     }
 }
 
@@ -26,7 +30,7 @@ wss.on('connection', (ws) => {
     ws.send(JSON.stringify({"sender": "server", "type": "hello"}))
     
     ws.on('message', (message) => {
-        if (isMonitor) return;
+        if (isMonitor && !FAST_MODE) return;
         if (!authed) {
             if (message.toString() === "MONITOR") {
                 isMonitor = true;
@@ -34,12 +38,12 @@ wss.on('connection', (ws) => {
                 return;
             }
             
-            if (monitor == null) {
+            if (monitor == null && !FAST_MODE) {
                 ws.send(JSON.stringify({"sender": "server", "type": "authDenied", "reason": "Het spel is nog niet geopend. Probeer het zometeen nog een keer"}))
                 return;
             }
             
-            if (started) {
+            if (started && !FAST_MODE) {
                 ws.send(JSON.stringify({"sender": "server", "type": "authDenied", "reason": "Het spel is al begonnen, je kunt er helaas niet meer bij"}));
                 return;
             }
@@ -57,7 +61,14 @@ wss.on('connection', (ws) => {
             console.log("authed " + JSON.stringify(self));
             console.log(authedClients)
             
-            monitor.ws.send(JSON.stringify({"sender": "server", "type": "join", "name": name, "uuid": uuid}))
+            if (!FAST_MODE) monitor.ws.send(JSON.stringify({"sender": "server", "type": "join", "name": name, "uuid": uuid}))
+            else {
+                startGame();
+                
+                setTimeout(() => {
+                    direct(uuid, {"sender": "server", "type": "startLoyalists"})
+                }, 1000)
+            }
             return;
         }
         
@@ -116,17 +127,8 @@ function handleMonitor(ws) {
         console.log("monitor: " + message)
         
         if (msg.type === "start") {
-            started = true;
             console.log("MONITOR SENT START")
-            
-            // round robin the teams
-            let lastTeam = 0;
-            for (let client of authedClients) {
-                client.ws.send(JSON.stringify({"sender": "server", "type": "team", "teamId": lastTeam % 2}));
-                lastTeam++;
-            }
-            
-            broadcast({"sender": "server", "type": "startGame"})
+            startGame();
         } else if (msg.type === "startFull") {
             console.log("starting full!")
             if (!started) {
@@ -173,4 +175,20 @@ function isNameUsed(name) {
     return false;
 }
 
+function startGame() {
+    started = true;
+    
+    // round robin the teams
+    for (let client of authedClients) {
+        if (client.wasStarted) continue;
+        client.wasStarted = true;
+        
+        client.ws.send(JSON.stringify({"sender": "server", "type": "team", "teamId": lastTeam % 2}));
+        lastTeam++;
+    }
+    
+    broadcast({"sender": "server", "type": "startGame"})
+}
+
 console.log("running on ws://127.0.0.1:5174")
+if (FAST_MODE) console.log("fast mode is enabled!")
