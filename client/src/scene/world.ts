@@ -49,6 +49,7 @@ export class MainScene extends Scene3D {
             Game.self = new Player(this);
             Game.self.uuid = Game.networking.clientId;
             Game.state = GameState.PREPARING;
+            Game.timeSinceStarted = Date.now();
             this.addEntity(Game.self);
         }
 

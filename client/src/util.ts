@@ -149,7 +149,7 @@ class GameInstance {
 
     formattedTimeRemaining(): string {
         const elapsed = Date.now() - this.timeSinceStarted;
-        const remaining = Math.max(0, (8 * 60 * 1000) - elapsed);
+        const remaining = Math.max(0, (Game.state == GameState.PREPARING ? (30 * 1000) : (8 * 60 * 1000)) - elapsed);
 
         const minutes = Math.floor(remaining / 60000);
         const seconds = Math.floor((remaining % 60000) / 1000);

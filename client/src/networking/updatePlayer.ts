@@ -58,6 +58,7 @@ export function handleRespawn(sender: string, data: any) {
 export async function handleLoyalistsSpawn(data: any) {
     if (Game.team == Team.NATIONALIST) {
         Game.state = GameState.FIGHTING;
+        Game.timeSinceStarted = Date.now();
         const {Airplane} = await import("../entity/airplane")
         Game.world!.addEntity(new Airplane())
     } else {
