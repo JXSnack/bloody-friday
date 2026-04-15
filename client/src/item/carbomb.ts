@@ -15,7 +15,7 @@ export class CarBomb extends Item {
     }
 
     createMesh() {
-        this.loadModel("carbomb.glb", () => {
+        this.loadModel("/carbomb.glb", () => {
             this.model!.scale.set(0.4, 0.4, 0.4);
         })
     }
