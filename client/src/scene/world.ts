@@ -31,7 +31,7 @@ export class MainScene extends Scene3D {
 
         await this.warpSpeed("-ground", "-orbitControls");
 
-        this.physics.add.ground({mass: 0, width: 10, height: 10});
+        // this.physics.add.ground({mass: 0, width: 10, height: 10});
 
         let arenaModel = await this.load.gltf("./arena.glb");
         arenaModel.scene.scale.set(0.5, 0.5, 0.5)
