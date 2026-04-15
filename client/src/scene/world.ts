@@ -71,7 +71,7 @@ export class MainScene extends Scene3D {
             tryRequestFullscreen();
 
             if (Game.self?.isDead) return;
-            Game.self?.activeItem.use();
+            if (Game.state != GameState.FLYING) Game.self?.activeItem.use();
         });
 
         // Feed mouse deltas to controls
