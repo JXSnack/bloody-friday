@@ -1,4 +1,4 @@
-import {debug, Game, Team, Vec} from "../util";
+import {Game, GameState, Team} from "../util";
 import {Player} from "../entity/player";
 
 export async function updatePlayer(sender: string, data: any) {
@@ -59,5 +59,7 @@ export async function handleLoyalistsSpawn(data: any) {
     if (Game.team == Team.NATIONALIST) {
         const {Airplane} = await import("../entity/airplane")
         Game.world!.addEntity(new Airplane())
+    } else {
+        Game.state = GameState.FLYING;
     }
 }

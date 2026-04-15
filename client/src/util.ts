@@ -13,6 +13,13 @@ export enum Team {
     LOYALIST
 }
 
+export enum GameState {
+    AWAITING_MONITOR, // before the game has started
+    PREPARING, // preparing loyalist dropoff
+    FLYING, // flying with plane (loyalist-only)
+    FIGHTING, // fighting
+}
+
 export class Vec {
     constructor(public x: number, public y: number, public z: number) {}
 
@@ -95,6 +102,7 @@ class GameInstance {
     public networking: NetworkingData = new NetworkingData();
 
     public started: boolean = false;
+    public state: GameState = GameState.AWAITING_MONITOR;
     public self: Player | null = null;
     public world: MainScene | null = null;
     public hud: FLAT.FlatArea | null = null;

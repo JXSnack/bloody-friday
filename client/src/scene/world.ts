@@ -1,8 +1,8 @@
-import {ExtendedGroup, FirstPersonControls, FLAT, Scene3D, THREE} from "enable3d";
+import {ExtendedGroup, FirstPersonControls, FLAT, Scene3D} from "enable3d";
 import {Entity} from "../entity/entity";
 import {Player} from "../entity/player"
-import {debug, Game, Team, Vec} from "../util";
-import {OrthographicCamera, PerspectiveCamera} from "three";
+import {debug, Game, GameState, Team, Vec} from "../util";
+import {PerspectiveCamera} from "three";
 import {UIInterface} from "../hud/main";
 import {DevOverlay} from "../hud/devOverlay";
 import {BarsOverlay} from "../hud/bars";
@@ -46,7 +46,10 @@ export class MainScene extends Scene3D {
 
         Game.self = new Player(this);
         Game.self.uuid = Game.networking.clientId;
-        if (Game.team == Team.NATIONALIST) this.addEntity(Game.self);
+        if (Game.team == Team.NATIONALIST) {
+            Game.state = GameState.PREPARING;
+            this.addEntity(Game.self);
+        }
 
         Game.hud = FLAT.init(this.renderer)
         FLAT.initEvents(this)
