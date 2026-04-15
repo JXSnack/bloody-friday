@@ -1,6 +1,6 @@
 const WebSocket = require('ws')
 
-const FAST_MODE = true;
+const FAST_MODE = false;
 
 const authedClients = []
 let lastTeam = 0;
