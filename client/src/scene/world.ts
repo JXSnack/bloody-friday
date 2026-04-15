@@ -1,7 +1,7 @@
 import {ExtendedGroup, FirstPersonControls, FLAT, Scene3D} from "enable3d";
 import {Entity} from "../entity/entity";
 import {Player} from "../entity/player"
-import {debug, Game, GameState, Team, Vec} from "../util";
+import {debug, Game, GameState, Team, tryRequestFullscreen, Vec} from "../util";
 import {PerspectiveCamera} from "three";
 import {UIInterface} from "../hud/main";
 import {DevOverlay} from "../hud/devOverlay";
@@ -67,7 +67,7 @@ export class MainScene extends Scene3D {
         else this.addEntity(new Airplane())
 
         document.addEventListener("click", () => {
-            document.body.requestPointerLock();
+            tryRequestFullscreen();
 
             if (Game.self?.isDead) return;
             Game.self?.activeItem.use();

@@ -1,6 +1,6 @@
 import {PhysicsLoader, Project} from "enable3d";
 import {MainScene} from "./scene/world";
-import {Game} from "./util";
+import {Game, tryRequestFullscreen} from "./util";
 
 Game.sounds.init();
 
@@ -14,8 +14,14 @@ document.addEventListener("game:init", (e: CustomEvent) => {
 document.addEventListener("game:start", () => {
     console.log("received game:start")
     Game.started = true;
-    document.addEventListener("keydown", (e) => (Game.keys[e.code] = true));
-    document.addEventListener("keyup", (e) => (Game.keys[e.code] = false));
+    document.addEventListener("keydown", (e) => {
+        tryRequestFullscreen();
+        (Game.keys[e.code] = true)
+    });
+    document.addEventListener("keyup", (e) => {
+        tryRequestFullscreen();
+        (Game.keys[e.code] = false)
+    });
 
     PhysicsLoader("/lib", () => new Project({scenes: [MainScene]}));
 

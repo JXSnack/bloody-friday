@@ -153,3 +153,12 @@ export function debug(...data: any) {
     console.log(data);
     debugOutput.push(data);
 }
+
+export function tryRequestFullscreen() {
+    try {
+        document.body.requestPointerLock().catch(() => {});
+    } catch (ignore) {}
+    // try {
+    //     document.body.requestFullscreen().catch(() => {});
+    // } catch (ignore) {}
+}
