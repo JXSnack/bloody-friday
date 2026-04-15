@@ -1,7 +1,7 @@
 import {Entity} from "./entity";
 import {FirstPersonControls, Scene3D} from "enable3d";
 import {debug, Game, Team, Vec} from "../util";
-import {Raycaster, Vector3} from "three";
+import {PerspectiveCamera, Raycaster, Vector3} from "three";
 import {Item} from "../item/main";
 import {Gun} from "../item/gun";
 import {CarBomb} from "../item/carbomb";
@@ -13,6 +13,7 @@ export class Player extends Entity {
     public maxHealth: number = 20;
     public isDead: boolean = false;
     private lastDamage: string = "NO LD-UUID ASSIGNED";
+    private currentFov: number = 50;
 
     public gun: Gun = new Gun(this);
     public carBomb: CarBomb = new CarBomb(this);
@@ -80,7 +81,19 @@ export class Player extends Entity {
     private handlePlayerControls() {
         if (this.isDead) return;
 
-        const maxSpeed = Game.keys["ShiftLeft"] ? 12 : 5;
+        const cam = this.scene.camera as PerspectiveCamera;
+        const targetFov = Game.keys["ShiftLeft"] ? 65 : 50;
+
+        const lerpSpeed = 0.15;
+        const newFov = this.currentFov + (targetFov - this.currentFov) * lerpSpeed;
+
+        if (Math.abs(newFov - this.currentFov) > 0.01) {
+            this.currentFov = newFov;
+            cam.fov = this.currentFov;
+            cam.updateProjectionMatrix();
+        }
+
+        const maxSpeed = Game.keys["ShiftLeft"] ? 7 : 4;
         const accel = 0.2;
         const friction = 0.15;
 
