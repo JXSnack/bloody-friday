@@ -1,6 +1,6 @@
 import {UIInterface} from "./main";
 import {FLAT} from "enable3d";
-import {debug, Game} from "../util";
+import {debug, Game, GameState} from "../util";
 
 export class BarsOverlay extends UIInterface {
     private crosshair: FLAT.SimpleSprite | undefined;
@@ -33,6 +33,32 @@ export class BarsOverlay extends UIInterface {
 
     private drawHealthBar(ctx: CanvasRenderingContext2D) {
         if (Game.self?.isDead) return;
+        if (Game.state == GameState.FLYING) {
+            const boxWidth = this.hbWidth;
+            const boxHeight = 50;
+            const x = (this.hbWidth - boxWidth) / 2;
+            const y = (this.hbHeight - boxHeight) / 2;
+
+            // background
+            ctx.beginPath();
+            ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+            ctx.roundRect(x, y, boxWidth, boxHeight, 8);
+            ctx.fill();
+
+            // text
+            const text = "Druk op E om te parachuteren";
+            ctx.beginPath();
+            ctx.fillStyle = "white";
+            ctx.font = "20px monospace";
+            const textWidth = ctx.measureText(text).width;
+            ctx.fillText(
+                text,
+                x + (boxWidth - textWidth) / 2,
+                y + boxHeight / 2 + 7
+            );
+
+            return;
+        }
 
         // background
         ctx.beginPath();
