@@ -5,7 +5,7 @@ import {FLAT} from "enable3d";
 export class DevOverlay extends UIInterface {
     private sprite!: FLAT.TextSprite;
     private position!: FLAT.TextSprite;
-    private visible: boolean = true;
+    private visible: boolean = false;
 
     create() {
         const tex = new FLAT.TextTexture("?", {fontSize: 28})
