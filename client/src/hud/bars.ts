@@ -140,6 +140,20 @@ export class BarsOverlay extends UIInterface {
 
         this.renderPointBar(ctx, 0, Game.nationalistPoints, "rgb(255,12,12)", true);
         this.renderPointBar(ctx, this.pbWidth / 2, Game.loyalistPoints, "rgb(12, 12, 255)", false);
+
+        // center time
+        const time = Game.formattedTimeRemaining();
+
+        ctx.beginPath();
+        ctx.font = "18px monospace";
+        ctx.fillStyle = "white";
+
+        const textWidth = ctx.measureText(time).width;
+        ctx.fillText(
+            time,
+            this.pbWidth / 2 - textWidth / 2,
+            this.pbHeight / 2 + 6
+        );
     }
 
     create() {
@@ -168,31 +182,61 @@ export class BarsOverlay extends UIInterface {
         this.addSprite(this.pointBar);
     }
 
-    renderPointBar(ctx: CanvasRenderingContext2D, x: number, points: number, color: string, left: boolean) {
-        let offset = 8;
-        let barWidth = this.pbWidth * 0.475;
-        let pointMultiplier = points / (Game.nationalistPoints + Game.loyalistPoints);
+    renderPointBar(
+        ctx: CanvasRenderingContext2D,
+        x: number,
+        points: number,
+        color: string,
+        left: boolean
+    ) {
+        const offset = 8;
+        const gapWidth = 90;
 
+        const total = Game.nationalistPoints + Game.loyalistPoints;
+
+        const fullWidth = this.pbWidth - offset * 2;
+        const halfWidth = (fullWidth - gapWidth) / 2;
+
+        const barHeight = this.pbHeight - offset * 2;
+
+        const pointMultiplier = total === 0 ? 0 : points / total;
+
+        // define fixed origin inside the bar
+        const leftStart = offset;
+        const rightStart = offset + halfWidth + gapWidth;
+
+        const baseX = left ? leftStart : rightStart;
+        const barWidth = halfWidth;
+
+        // outline
         ctx.beginPath();
         ctx.fillStyle = color;
         ctx.strokeStyle = color;
-        ctx.roundRect(x + offset, offset, barWidth, this.pbHeight - offset * 2, 4);
+        ctx.roundRect(baseX, offset, barWidth, barHeight, 4);
         ctx.stroke();
+
+        // fill
+        const fillWidth = barWidth * pointMultiplier;
 
         ctx.beginPath();
         if (left) {
-            ctx.roundRect(x + offset, offset, barWidth * pointMultiplier, this.pbHeight - offset * 2, 4);
+            ctx.roundRect(baseX, offset, fillWidth, barHeight, 4);
         } else {
-            ctx.roundRect(x + barWidth - barWidth * pointMultiplier, offset, barWidth * pointMultiplier + offset, this.pbHeight - offset * 2, 4);
+            ctx.roundRect(baseX + (barWidth - fillWidth), offset, fillWidth, barHeight, 4);
         }
         ctx.fill();
 
+        // text
         ctx.beginPath();
         ctx.font = "18px monospace";
         ctx.fillStyle = "white";
-        let textX = offset * 2;
-        if (!left) textX = barWidth - ctx.measureText(points.toString()).width;
-        ctx.fillText(points.toString(), x + textX, this.pbHeight / 2 + 6);
+
+        const text = points.toString();
+        const textX = left
+            ? baseX + 6
+            : baseX + barWidth - ctx.measureText(text).width - 6;
+
+        ctx.fillText(text, textX, this.pbHeight / 2 + 6);
     }
 
     update() {

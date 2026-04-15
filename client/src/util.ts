@@ -86,7 +86,7 @@ export class Vec {
     }
 
     static ZERO = new Vec(0, 0, 0);
-    static from = (vector: {x: number, y: number, z: number}): Vec => {
+    static from = (vector: { x: number, y: number, z: number }): Vec => {
         return new Vec(vector.x, vector.y, vector.z);
     }
 
@@ -95,14 +95,16 @@ export class Vec {
     }
 }
 
-export type Box = {width: number, height: number, depth: number}
+export type Box = { width: number, height: number, depth: number }
 
 class GameInstance {
     public keys: Record<string, boolean> = {};
     public networking: NetworkingData = new NetworkingData();
 
     public started: boolean = false;
+    public timeSinceStarted: number = Date.now();
     public state: GameState = GameState.AWAITING_MONITOR;
+
     public self: Player | null = null;
     public world: MainScene | null = null;
     public hud: FLAT.FlatArea | null = null;
@@ -144,11 +146,24 @@ class GameInstance {
         const gltf = await this.modelCachePromises[path];
         return gltf.scene.clone();
     }
+
+    formattedTimeRemaining(): string {
+        const elapsed = Date.now() - this.timeSinceStarted;
+        const remaining = Math.max(0, (8 * 60 * 1000) - elapsed);
+
+        const minutes = Math.floor(remaining / 60000);
+        const seconds = Math.floor((remaining % 60000) / 1000);
+
+        return String(minutes).padStart(2, "0") +
+            ":" +
+            String(seconds).padStart(2, "0");
+    }
 }
 
 export const Game: GameInstance = new GameInstance();
 
 export const debugOutput: any = []
+
 export function debug(...data: any) {
     console.log(data);
     debugOutput.push(data);
@@ -156,8 +171,10 @@ export function debug(...data: any) {
 
 export function tryRequestFullscreen() {
     try {
-        document.body.requestPointerLock().catch(() => {});
-    } catch (ignore) {}
+        document.body.requestPointerLock().catch(() => {
+        });
+    } catch (ignore) {
+    }
     // try {
     //     document.body.requestFullscreen().catch(() => {});
     // } catch (ignore) {}
