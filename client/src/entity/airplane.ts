@@ -1,9 +1,10 @@
 import {Entity} from "./entity";
-import {debug, Game, Team, Vec} from "../util";
-import {Euler, MathUtils} from "three";
+import {debug, Game, GameState, Team, Vec} from "../util";
+import {MathUtils} from "three";
 
 export class Airplane extends Entity {
     private spawnDate!: number;
+    private hasJumped: boolean = false;
 
     constructor() {
         super("airplane", Game.world!);
@@ -34,15 +35,14 @@ export class Airplane extends Entity {
         super.update();
 
         let pos = new Vec(MathUtils.lerp(-40, 50, (Date.now() - this.spawnDate) / (10 * 1000)), 9, 0);
-        this.setPos(pos)
+        this.setPos(pos);
 
-        if (Game.team == Team.LOYALIST && Date.now() - this.spawnDate > 10 * 1000) {
-            Game.world!.addEntity(Game.self!);
+        if (Date.now() - this.spawnDate > 10 * 1000) {
+            if (Game.team == Team.LOYALIST) this.doParachute();
             Game.world!.removeEntity(this.uuid);
-            Game.world!.setupControls();
         }
 
-        if (Game.team == Team.LOYALIST) {
+        if (Game.team == Team.LOYALIST && Game.state == GameState.FLYING) {
             const orbitRadius = 15;
             const orbitSpeed = 0.0004; // radians per ms, tune to taste
             const orbitHeight = 8;
@@ -55,6 +55,18 @@ export class Airplane extends Entity {
             Game.world!.camera.position.set(camX, camY, camZ);
             Game.world!.camera.lookAt(pos.x, pos.y, pos.z);
         }
+
+        if (Game.keys["KeyE"]) this.doParachute();
+    }
+
+    private doParachute() {
+        if (this.hasJumped) return;
+        this.hasJumped = true;
+
+        Game.world!.addEntity(Game.self!);
+        Game.world!.setupControls();
+        Game.state = GameState.FIGHTING;
+        Game.self!.setPos(this.getPos().withSub(new Vec(0, 2, 0)));
     }
 
     broadcast() {} // Don't broadcast!
