@@ -13,6 +13,11 @@ document.addEventListener("game:init", (e: CustomEvent) => {
 
 document.addEventListener("game:start", () => {
     console.log("received game:start")
+    if (Game.started) {
+        console.log("I STOPPED YOU FROM FUCKING EVERYTHING UP!!!!!!!!")
+        return;
+    }
+
     Game.started = true;
     document.addEventListener("keydown", (e) => {
         tryRequestFullscreen();
