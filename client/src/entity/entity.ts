@@ -66,7 +66,11 @@ export abstract class Entity {
     }
 
     update() {
-        if (this.mesh == null) return;
+        if (this.mesh == null) {
+            this.collidingBodies.clear();
+            return;
+        }
+
         let pos = this.getPos();
 
         if (this.remote && this.targetPos != null) this.updateLerpedRemotePos();

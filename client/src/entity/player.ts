@@ -258,6 +258,7 @@ export class Player extends Entity {
             Game.networking.sendDirect(this.uuid, this.lastDamage, {"type": "kill"})
             Game.networking.send(this.uuid, {"type": "death"})
 
+            this.collidingBodies.clear();
             if (!this.remote) this.removeMesh();
         }
     }
