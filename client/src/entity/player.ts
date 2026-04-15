@@ -6,6 +6,20 @@ import {Item} from "../item/main";
 import {Gun} from "../item/gun";
 import {CarBomb} from "../item/carbomb";
 
+const SPAWN_LOCATIONS = [
+    {pos: new Vec(34.745567321777344, 0.9106167554855347, -14.461936950683594), rot: new Vec(0, -0.6239552075879722, 0)},
+    {pos: new Vec(-36.11078643798828, 0.9106065630912781, 3.3671581745147705), rot: new Vec(0, 2.1205750411731104, 0)},
+    {pos: new Vec(-37.541439056396484, 0.9106178283691406, -10.285262107849121), rot: new Vec(0, 0.8988445647770794, 0)},
+    {pos: new Vec(-22.994831085205078, 0.910606861114502, 3.6550843715667725), rot: new Vec(0, 1.9089538693687975, 0)},
+    {pos: new Vec(-6.664977550506592, 0.9106026291847229, 9.470048904418945), rot: new Vec(0, -2.384556090537253, 0)},
+    {pos: new Vec(-12.986553192138672, 0.9106032848358154, -9.966469764709473), rot: new Vec(0, 0.1941678792843692, 0)},
+    {pos: new Vec(8.993915557861328, 0.9106025099754333, 9.72420597076416), rot: new Vec(0, -2.081305133003238, 0)},
+    {pos: new Vec(26.095661163330078, 0.9106031060218811, 0.7932774424552917), rot: new Vec(0, -1.437714971330329, 0)},
+    {pos: new Vec(32.491661071777344, 0.9106160998344421, -14.15428638458252), rot: new Vec(0, -0.5825036378531085, 0)},
+    {pos: new Vec(46.958030700683594, 0.910610556602478, -2.6610238552093506), rot: new Vec(0, -1.9024088846738192, 0)},
+    {pos: new Vec(51.801353454589844, 0.9106009602546692, 10.109000205993652), rot: new Vec(0, -2.5896322776465865, 0)}
+]
+
 export class Player extends Entity {
     public name: string = "NO U-NAME ASSIGNED";
 
@@ -24,11 +38,17 @@ export class Player extends Entity {
     public recoil = 0;
     private recoilVelocity = 0;
 
-    constructor(scene: Scene3D) {
+    constructor(scene: Scene3D, spawnPos?: Vec) {
         super("player", scene);
         this.mass = 2;
         this.hitboxSize = new Vec(0.7, 2, 0.7);
-        this.targetPos = new Vec(Math.random() * 5 - 3, 20, Math.random() * 5 - 3);
+
+        if (!spawnPos) {
+            let spawnLoc: { pos: Vec, rot: Vec } = SPAWN_LOCATIONS[Math.floor(Math.random() * SPAWN_LOCATIONS.length)]
+            spawnPos = spawnLoc.pos.withAdd(new Vec(Math.random() * 3, Math.random() * 3, Math.random() * 3));
+        }
+
+        this.targetPos = spawnPos;
     }
 
     create() {

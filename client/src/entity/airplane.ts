@@ -69,6 +69,8 @@ export class Airplane extends Entity {
 
         FadeOverlay.INSTANCE.fadeIn();
 
+        Game.self = new Player(Game.world!, this.getPos().withSub(new Vec(0, 2, 0)));
+        Game.self.uuid = Game.networking.clientId;
         Game.world!.addEntity(Game.self!);
         Game.world!.setupControls();
         Game.state = GameState.FIGHTING;

@@ -10,6 +10,7 @@ import {HitConfirmOverlay} from "../hud/hitConfirm";
 import {KillOverlay} from "../hud/killOverlay";
 import {DeathOverlay} from "../hud/death";
 import {Airplane} from "../entity/airplane";
+import {FadeOverlay} from "../hud/fadeOverlay";
 
 export class MainScene extends Scene3D {
     private entities: Record<string, Entity> = {};
@@ -44,9 +45,9 @@ export class MainScene extends Scene3D {
             mass: 0
         })
 
-        Game.self = new Player(this);
-        Game.self.uuid = Game.networking.clientId;
         if (Game.team == Team.NATIONALIST) {
+            Game.self = new Player(this);
+            Game.self.uuid = Game.networking.clientId;
             Game.state = GameState.PREPARING;
             this.addEntity(Game.self);
         }
