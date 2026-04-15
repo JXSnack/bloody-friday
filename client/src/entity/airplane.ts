@@ -18,7 +18,7 @@ export class Airplane extends Entity {
         this.spawnDate = Date.now();
         this.createMesh();
 
-        FadeOverlay.INSTANCE.fadeIn();
+        if (Game.team == Team.LOYALIST) FadeOverlay.INSTANCE.fadeIn();
     }
 
     createMesh() {

@@ -87,6 +87,8 @@ export class MainScene extends Scene3D {
             cam.aspect = window.innerWidth / window.innerHeight;
             this.camera.updateProjectionMatrix();
         }
+
+        FadeOverlay.INSTANCE.fadeIn();
     }
 
     setupControls() {
