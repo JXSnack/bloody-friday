@@ -1,6 +1,8 @@
 import {Entity} from "./entity";
 import {debug, Game, GameState, Team, Vec} from "../util";
 import {MathUtils} from "three";
+import {FadeOverlay} from "../hud/fadeOverlay";
+import {Player} from "./player";
 
 export class Airplane extends Entity {
     private spawnDate!: number;
@@ -15,6 +17,8 @@ export class Airplane extends Entity {
     create() {
         this.spawnDate = Date.now();
         this.createMesh();
+
+        FadeOverlay.INSTANCE.fadeIn();
     }
 
     createMesh() {
@@ -63,10 +67,11 @@ export class Airplane extends Entity {
         if (this.hasJumped) return;
         this.hasJumped = true;
 
+        FadeOverlay.INSTANCE.fadeIn();
+
         Game.world!.addEntity(Game.self!);
         Game.world!.setupControls();
         Game.state = GameState.FIGHTING;
-        Game.self!.setPos(this.getPos().withSub(new Vec(0, 2, 0)));
     }
 
     broadcast() {} // Don't broadcast!

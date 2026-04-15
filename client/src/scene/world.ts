@@ -59,6 +59,7 @@ export class MainScene extends Scene3D {
         this.addUI(KillOverlay.INSTANCE);
         this.addUI(new BarsOverlay());
         this.addUI(new DeathOverlay())
+        this.addUI(FadeOverlay.INSTANCE);
         this.addUI(new DevOverlay());
 
         if (Game.team == Team.NATIONALIST) this.setupControls();
