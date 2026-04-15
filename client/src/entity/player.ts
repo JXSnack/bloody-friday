@@ -43,10 +43,7 @@ export class Player extends Entity {
         this.mass = 2;
         this.hitboxSize = new Vec(0.7, 2, 0.7);
 
-        if (!spawnPos) {
-            let spawnLoc: { pos: Vec, rot: Vec } = SPAWN_LOCATIONS[Math.floor(Math.random() * SPAWN_LOCATIONS.length)]
-            spawnPos = spawnLoc.pos.withAdd(new Vec(Math.random() * 3, Math.random() * 3, Math.random() * 3));
-        }
+        if (!spawnPos) spawnPos = this.findSpawnPos();
 
         this.targetPos = spawnPos;
     }
@@ -265,12 +262,17 @@ export class Player extends Entity {
         }
     }
 
+    findSpawnPos() {
+        let spawnLoc: { pos: Vec, rot: Vec } = SPAWN_LOCATIONS[Math.floor(Math.random() * SPAWN_LOCATIONS.length)]
+        return spawnLoc.pos.withAdd(new Vec(Math.random() * 3, Math.random() * 3, Math.random() * 3));
+    }
+
     respawn() {
         Game.networking.send(this.uuid, {"type": "respawn"})
 
         this.isDead = false;
         this.health = this.maxHealth;
-        this.setPos({ x: 0, y: 5, z: 0 } as any);
+        this.setPos(this.findSpawnPos());
 
         if (!this.remote) this.createMesh();
     }
