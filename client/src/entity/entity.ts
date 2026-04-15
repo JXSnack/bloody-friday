@@ -16,7 +16,7 @@ export abstract class Entity {
     }
 
     public scene: Scene3D;
-    public collisions: number = 0;
+    public collidingBodies: Set<any> = new Set<any>();
     public remote: boolean = false;
 
     public targetPos: Vec | null = null;
@@ -54,14 +54,14 @@ export abstract class Entity {
         // @ts-ignore
         this.mesh.bloodyFridayEntity = this;
         if (this.mesh!.body) this.mesh!.body.on.collision((other: any, event) => {
-            if (event == "start") {
-                this.collisions++;
+            if (other == null) return;
 
-                if (other == null) return;
-                if (!other.bloodyFridayEntity) return;
-                this.onCollide(other.bloodyFridayEntity);
+            if (event === "start") {
+                this.collidingBodies.add(other);
+                if (other.bloodyFridayEntity) this.onCollide(other.bloodyFridayEntity);
+            } else if (event === "end") {
+                this.collidingBodies.delete(other);
             }
-            else if (event == "end") this.collisions--;
         })
     }
 
@@ -148,7 +148,7 @@ export abstract class Entity {
     }
 
     isColliding(): boolean {
-        return this.collisions > 0;
+        return this.collidingBodies.size > 0;
     }
 
     broadcast() {
