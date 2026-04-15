@@ -19,6 +19,7 @@ document.addEventListener("game:start", () => {
     }
 
     Game.started = true;
+    Game.timeSinceStarted = Date.now();
     document.addEventListener("keydown", (e) => {
         tryRequestFullscreen();
         (Game.keys[e.code] = true)
