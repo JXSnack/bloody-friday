@@ -45,7 +45,7 @@ export class DevOverlay extends UIInterface {
 
         if (!this.visible) return;
 
-        const tex = new FLAT.TextTexture(debugOutput.join("\n"), {fontSize: 28})
+        const tex = new FLAT.TextTexture(debugOutput.slice(-30).join("\n"), {fontSize: 28})
         this.sprite.setTexture(tex);
         this.sprite.setScale(1);
         this.sprite.setPosition(this.sprite.textureWidth / 2, this.sprite.textureHeight / 2);
