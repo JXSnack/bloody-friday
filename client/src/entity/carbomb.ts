@@ -66,11 +66,12 @@ export class CarBombEntity extends Entity {
         this.exploded = true;
 
         const pos = this.getPos();
-        const RADIUS = 1.5;
+        const RADIUS = 11;
 
         for (const entity of Object.values(Game.world!["entities"])) {
             if (!(entity instanceof Player)) continue;
-            if (Game.self == entity) continue;
+            if (Game.self == entity || entity.remoteTeam == null) continue;
+            if (entity.remoteTeam == Game.team) continue;
 
             const ePos = entity.getPos();
             if (Math.abs(ePos.x - pos.x) <= RADIUS &&
