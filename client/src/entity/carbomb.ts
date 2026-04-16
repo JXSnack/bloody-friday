@@ -69,6 +69,8 @@ export class CarBombEntity extends Entity {
 
         for (const entity of Object.values(Game.world!["entities"])) {
             if (!(entity instanceof Player)) continue;
+            if (Game.self == entity) continue;
+
             const ePos = entity.getPos();
             if (Math.abs(ePos.x - pos.x) <= RADIUS &&
                 Math.abs(ePos.y - pos.y) <= RADIUS &&
