@@ -9,14 +9,18 @@ export class WaterCannon extends Item {
 
     constructor(owner: Player) {
         super(owner, "water_cannon");
+        this.modelOffset = new Vec(0.25, -1, 0);
+        this.modelRotset = new Vec(0, 249.55, 0)
     }
 
     create() {
         super.create();
+
+        if (this.owner == Game.self) this.modelOffset = this.modelOffset.withAdd(new Vec(-0.3, 0.6, 0.3))
     }
 
     createMesh() {
-        this.loadModel("/gun.glb", () => {
+        this.loadModel("/cannon.glb", () => {
             this.model?.scale.set(0.2, 0.2, 0.2);
         })
     }
