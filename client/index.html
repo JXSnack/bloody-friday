@@ -115,31 +115,81 @@
         }
 
         #monitor {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
             align-items: center;
-	        text-align: center;
+            justify-content: center;
+            text-align: center;
+            transition: background 0.8s ease;
+            background: #0a0a0a;
         }
 
         #monitor > h1 {
             font-size: 64px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 20px rgba(0,0,0,0.6);
         }
+
+        #score-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            display: flex;
+        }
+
+        #score-bar-green {
+            background: #0bda0b;
+            height: 100%;
+            transition: width 0.8s ease;
+        }
+
+        #score-bar-blue {
+            background: #6a6aff;
+            height: 100%;
+            flex: 1;
+            transition: width 0.8s ease;
+        }
+
+        #score-overlay {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            font-size: 13px;
+            letter-spacing: .1em;
+            z-index: 2;
+        }
+
+        #score-overlay .nat { color: #0bda0b; font-weight: 600; }
+        #score-overlay .loy { color: #6a6aff; font-weight: 600; }
+        #score-overlay .sep { color: #555; }
 
         #members {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-
-	        justify-content: center;
-	        max-width: 700px;
+            justify-content: center;
+            max-width: 700px;
+            position: relative;
+            z-index: 1;
         }
 
         #members p {
-            background-color: white;
+            background-color: rgba(255,255,255,0.9);
             color: black;
             padding: 5px 10px;
-
             cursor: pointer;
             transition: 0.1s;
-	        margin: 0;
+            margin: 0;
+            border-radius: 3px;
         }
 
         #members p:hover {
@@ -148,28 +198,120 @@
         }
 
         #endCard {
-	        display: flex;
-	        flex-direction: column;
-
-	        align-items: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         #endCard p {
-	        margin: 0;
+            margin: 0;
         }
 
         #endCard > p {
-	        margin-top: 10px;
+            margin-top: 10px;
         }
 
         .nationalisten {
-	        color: #0bda0b;
-	        font-weight: bold;
+            color: #0bda0b;
+            font-weight: bold;
         }
 
         .loyalisten {
-	        color: #6a6aff;
-	        font-weight: bold;
+            color: #6a6aff;
+            font-weight: bold;
+        }
+
+        /* Monitor end screen overlay */
+        #monitor-end {
+            position: fixed;
+            inset: 0;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            background: #000;
+        }
+
+        #monitor-end.show {
+            display: flex;
+            animation: fadeIn 1s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        #end-winner-label {
+            font-size: 14px;
+            letter-spacing: .4em;
+            text-transform: uppercase;
+            color: #555;
+            margin-bottom: 12px;
+        }
+
+        #end-winner-name {
+            font-family: "Bebas Neue", sans-serif;
+            font-size: clamp(80px, 16vw, 160px);
+            line-height: 0.9;
+            letter-spacing: .04em;
+            margin: 0 0 48px;
+        }
+
+        #end-score-bar-wrap {
+            width: min(700px, 80vw);
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            display: flex;
+            margin-bottom: 16px;
+            background: #111;
+        }
+
+        #end-bar-green {
+            background: #0bda0b;
+            height: 100%;
+            transition: width 1.5s cubic-bezier(.4,0,.2,1);
+        }
+
+        #end-bar-blue {
+            background: #6a6aff;
+            height: 100%;
+            flex: 1;
+        }
+
+        #end-score-labels {
+            display: flex;
+            justify-content: space-between;
+            width: min(700px, 80vw);
+            font-size: 13px;
+            letter-spacing: .1em;
+        }
+
+        #end-score-labels .nat { color: #0bda0b; }
+        #end-score-labels .loy { color: #6a6aff; }
+
+        #end-particles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 99;
+        }
+
+        .particle {
+            position: absolute;
+            top: -20px;
+            border-radius: 50%;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(720deg);
+                opacity: 0;
+            }
         }
 	</style>
 </head>
@@ -204,6 +346,17 @@
 
 	<div id="members"></div>
 
+	<div id="score-bar">
+		<div id="score-bar-green" style="width: 50%"></div>
+		<div id="score-bar-blue"></div>
+	</div>
+
+	<div id="score-overlay">
+		<span class="nat">Nationalisten: <span id="live-nat">0</span></span>
+		<span class="sep">|</span>
+		<span class="loy">Loyalisten: <span id="live-loy">0</span></span>
+	</div>
+
 	<button id="m-start" style="position: absolute; bottom: 15px; right: 15px; width: 150px">Start</button>
 </div>
 
@@ -218,6 +371,21 @@
 	</div>
 
 	<p><span id="nationalistPts" class="nationalisten">x</span>/<span id="loyalistPts" class="loyalisten">x</span></p>
+</div>
+
+<!-- Monitor-only end screen -->
+<div id="monitor-end">
+	<div id="end-particles"></div>
+	<p id="end-winner-label">Winnaar</p>
+	<h1 id="end-winner-name">—</h1>
+	<div id="end-score-bar-wrap">
+		<div id="end-bar-green" style="width: 50%"></div>
+		<div id="end-bar-blue"></div>
+	</div>
+	<div id="end-score-labels">
+		<span class="nat"><span id="end-nat-pts">0</span> pts</span>
+		<span class="loy"><span id="end-loy-pts">0</span> pts</span>
+	</div>
 </div>
 
 <script type="text/javascript">
@@ -260,7 +428,7 @@
             let timer = setInterval(() => {
                 seconds--;
                 document.querySelector("#time").innerHTML = seconds;
-	            if (seconds <= 0) clearInterval(timer);
+                if (seconds <= 0) clearInterval(timer);
             }, 950)
         })
 
@@ -271,8 +439,84 @@
         });
     }
 
+    function updateMonitorBackground(nat, loy) {
+        const total = nat + loy;
+        const greenPct = total === 0 ? 50 : Math.round((nat / total) * 100);
+
+        // Split background: green left, blue right
+        mon.style.background = `linear-gradient(to right, #0a2e0a ${greenPct}%, #0a0a2e ${greenPct}%)`;
+
+        // Bottom score bar
+        document.getElementById("score-bar-green").style.width = greenPct + "%";
+
+        // Live score labels
+        document.getElementById("live-nat").textContent = nat;
+        document.getElementById("live-loy").textContent = loy;
+    }
+
+    function showMonitorEndScreen(winner, natPts, loyPts) {
+        const endEl = document.getElementById("monitor-end");
+        const nameEl = document.getElementById("end-winner-name");
+        const natPtsEl = document.getElementById("end-nat-pts");
+        const loyPtsEl = document.getElementById("end-loy-pts");
+        const barGreen = document.getElementById("end-bar-green");
+
+        const total = natPts + loyPts;
+        const greenPct = total === 0 ? 50 : Math.round((natPts / total) * 100);
+
+        const winnerName = winner === 0 ? "Nationalisten" : "Loyalisten";
+        const winnerColor = winner === 0 ? "#0bda0b" : "#6a6aff";
+
+        nameEl.textContent = winnerName;
+        nameEl.style.color = winnerColor;
+        natPtsEl.textContent = natPts;
+        loyPtsEl.textContent = loyPts;
+
+        endEl.style.background = winner === 0
+            ? "linear-gradient(135deg, #001a00 0%, #000 60%)"
+            : "linear-gradient(135deg, #00001a 0%, #000 60%)";
+
+        endEl.classList.add("show");
+
+        // Animate score bar after a short delay
+        setTimeout(() => {
+            barGreen.style.width = greenPct + "%";
+        }, 400);
+
+        // Launch particles in winner's color
+        spawnParticles(winnerColor);
+    }
+
+    function spawnParticles(color) {
+        const container = document.getElementById("end-particles");
+        const count = 80;
+
+        for (let i = 0; i < count; i++) {
+            setTimeout(() => {
+                const p = document.createElement("div");
+                p.className = "particle";
+                const size = 6 + Math.random() * 10;
+                p.style.cssText = `
+                    left: ${Math.random() * 100}%;
+                    width: ${size}px;
+                    height: ${size}px;
+                    background: ${color};
+                    opacity: ${0.6 + Math.random() * 0.4};
+                    animation-duration: ${2 + Math.random() * 3}s;
+                    animation-delay: 0s;
+                `;
+                container.appendChild(p);
+                setTimeout(() => p.remove(), 6000);
+            }, i * 60);
+        }
+    }
+
     function bootMonitor() {
         let pass = prompt("password")
+
+        let pointsNationalist = 0;
+        let pointsLoyalist = 0;
+
         if (pass !== "croissant") {
             document.body.innerHTML = "";
             return;
@@ -284,7 +528,7 @@
         mm.setAttribute("style", "display: none");
         mon.setAttribute("style", "");
 
-	    ws = new WebSocket(`${window.location.protocol === "https:" ? "wss://friday.snackbag.net/ws/" : "ws://127.0.0.1:5174/"}}`);
+        ws = new WebSocket(`${window.location.protocol === "https:" ? "wss://friday.snackbag.net/ws/" : "ws://127.0.0.1:5174/"}}`);
         ws.onopen = () => {
             ws.send("MONITOR");
         }
@@ -292,7 +536,7 @@
         ws.onmessage = (message) => {
             let msg = JSON.parse(message.data);
 
-	        if (msg.sender === "server") {
+            if (msg.sender === "server") {
                 console.log(msg)
                 if (msg.type === "join") {
                     let p = document.createElement("p");
@@ -305,6 +549,10 @@
                 } else if (msg.type === "disconnect") {
                     let p = document.getElementById(msg.uuid);
                     p.remove();
+                } else if (msg.type === "pointsUpdate") {
+                    pointsNationalist = msg.nationalist;
+                    pointsLoyalist = msg.loyalist;
+                    updateMonitorBackground(pointsNationalist, pointsLoyalist);
                 }
             }
         }
@@ -316,15 +564,22 @@
             setTimeout(() => {
                 ws.send(JSON.stringify({"type": "startFull"}))
 
-	            setTimeout(() => {
+                setTimeout(() => {
                     handleGameEnd();
-	            }, 5 * 60 * 1000);
+                }, 5 * 60 * 1000);
             }, 30 * 1000)
         })
+
+        // Expose so handleGameEnd can use current points
+        window._getMonitorPoints = () => ({ nat: pointsNationalist, loy: pointsLoyalist });
     }
 
     function handleGameEnd() {
-        ws.send(JSON.stringify({"type": "gameEnd", "winner": 1}))
+        const winner = 1; // change as needed
+        ws.send(JSON.stringify({"type": "gameEnd", "winner": winner}));
+
+        const pts = window._getMonitorPoints ? window._getMonitorPoints() : { nat: 0, loy: 0 };
+        showMonitorEndScreen(winner, pts.nat, pts.loy);
     }
 
     if (location.hash === "#monitor") bootMonitor();
