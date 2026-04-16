@@ -22,3 +22,10 @@ export function handleExplosion(uuid: string, data: any) {
     Game.world?.removeEntity(uuid);
     Game.sounds.playCarCrash(Game.sounds.calculateDistanceVolume(data["pos"], 20));
 }
+
+export function handleForceVel(sender: string, data: any) {
+    if (!Game.self || !Game.self.mesh) return;
+
+    let vec: Vec = data["vec"];
+    Game.self.mesh!.body.setVelocity(vec.x, vec.y, vec.z);
+}

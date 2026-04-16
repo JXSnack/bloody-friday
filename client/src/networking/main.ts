@@ -1,7 +1,7 @@
 import {debug, Game, Team} from "../util";
 import {handleDeath, handleLoyalistsSpawn, handleRespawn, updatePlayer} from "./updatePlayer";
 import {Entity} from "../entity/entity";
-import {handleDamage, handleExplosion, handleKill, handleSomeShot} from "./damage";
+import {handleDamage, handleExplosion, handleForceVel, handleKill, handleSomeShot} from "./damage";
 import {Airplane} from "../entity/airplane";
 
 export class NetworkingData {
@@ -45,6 +45,7 @@ export class NetworkingData {
         else if (type == "explosion") handleExplosion(sender, data);
         else if (type == "death") handleDeath(sender, data);
         else if (type == "respawn") handleRespawn(sender, data);
+        else if (type == "forceVel") handleForceVel(sender, data);
     }
 
     onServerMessage(data: any) {
