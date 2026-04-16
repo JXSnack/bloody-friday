@@ -71,6 +71,8 @@ export class MainScene extends Scene3D {
         else this.addEntity(new Airplane())
 
         document.addEventListener("click", () => {
+            if (!Game.started) return;
+
             tryRequestFullscreen();
 
             if (Game.self) {
@@ -81,6 +83,8 @@ export class MainScene extends Scene3D {
 
         // Feed mouse deltas to controls
         document.addEventListener("mousemove", (e) => {
+            if (!Game.started) return;
+
             if (document.pointerLockElement !== document.body) return;
             this.mouseX = e.movementX;
             this.mouseY = e.movementY;

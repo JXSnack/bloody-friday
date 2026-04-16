@@ -23,10 +23,14 @@ document.addEventListener("game:start", () => {
     Game.started = true;
     Game.timeSinceStarted = Date.now();
     document.addEventListener("keydown", (e) => {
+        if (!Game.started) return;
+
         tryRequestFullscreen();
         (Game.keys[e.code] = true)
     });
     document.addEventListener("keyup", (e) => {
+        if (!Game.started) return;
+
         tryRequestFullscreen();
         (Game.keys[e.code] = false)
     });

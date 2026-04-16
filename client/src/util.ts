@@ -8,6 +8,7 @@ import {Entity} from "./entity/entity";
 import {AudioManager} from "@yandeu/audio";
 import {Sounds} from "./sound";
 import {UnlockOverlay} from "./hud/unlockOverlay";
+import {FadeOverlay} from "./hud/fadeOverlay";
 
 export enum Team {
     NATIONALIST,
@@ -195,6 +196,25 @@ class GameInstance {
         } else if (before < this.waterCannonUnlock && after >= this.waterCannonUnlock) {
             UnlockOverlay.INSTANCE.doMessage(`${teamStr} hebben nu waterkanonnen!`, teamCol);
         }
+    }
+
+    handleEnd(winner: Team) {
+        FadeOverlay.INSTANCE.fadeOut();
+        setTimeout(() => {
+            this.started = false;
+            Game.keys = {};
+            document.querySelector("canvas")!.remove();
+
+            let teamName = winner == Team.LOYALIST ? "loyalisten" : "nationalisten";
+            document.querySelector("#winnerTeamName")!.innerHTML = `<span class="${teamName}">${teamName}</span>`
+
+            document.querySelector("#nationalistPts")!.innerHTML = "" + this.nationalistPoints;
+            document.querySelector("#loyalistPts")!.innerHTML = "" + this.nationalistPoints;
+
+            document.querySelector("#endCard")!.setAttribute("style", "");
+            if (Game.team == winner) document.querySelector("#won")!.setAttribute("style", "");
+            else document.querySelector("#lost")!.setAttribute("style", "");
+        }, 2000);
     }
 }
 

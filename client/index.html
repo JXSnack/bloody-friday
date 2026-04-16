@@ -146,6 +146,31 @@
             text-decoration: line-through;
             transform: scale(1.1);
         }
+
+        #endCard {
+	        display: flex;
+	        flex-direction: column;
+
+	        align-items: center;
+        }
+
+        #endCard p {
+	        margin: 0;
+        }
+
+        #endCard > p {
+	        margin-top: 10px;
+        }
+
+        .nationalisten {
+	        color: #0bda0b;
+	        font-weight: bold;
+        }
+
+        .loyalisten {
+	        color: #6a6aff;
+	        font-weight: bold;
+        }
 	</style>
 </head>
 <body>
@@ -182,9 +207,23 @@
 	<button id="m-start" style="position: absolute; bottom: 15px; right: 15px; width: 150px">Start</button>
 </div>
 
+<div id="endCard" style="display: none">
+	<h1>De <span id="winnerTeamName"></span> hebben gewonnen!</h1>
+	<div id="won" style="display: none">
+		<p>dat ben ook jij!</p>
+	</div>
+
+	<div id="lost" style="display: none">
+		<p>...maar jij was de tegenstander :(</p>
+	</div>
+
+	<p><span id="nationalistPts" class="nationalisten">x</span>/<span id="loyalistPts" class="loyalisten">x</span></p>
+</div>
+
 <script type="text/javascript">
     let mm = document.querySelector("#mm");
-    let mon = document.querySelector("#monitor")
+    let mon = document.querySelector("#monitor");
+    let ws;
 
     function bootUser() {
         let login = document.querySelector("#login");
@@ -214,6 +253,7 @@
 
         document.addEventListener("game:prepare", () => {
             login.setAttribute("style", "display: none");
+            waiting.setAttribute("hidden", "");
             preparing.setAttribute("style", "");
 
             let seconds = 31;
@@ -244,7 +284,7 @@
         mm.setAttribute("style", "display: none");
         mon.setAttribute("style", "");
 
-        let ws = new WebSocket(`${window.location.protocol === "https:" ? "wss://friday.snackbag.net/ws/" : "ws://127.0.0.1:5174/"}}`);
+	    ws = new WebSocket(`${window.location.protocol === "https:" ? "wss://friday.snackbag.net/ws/" : "ws://127.0.0.1:5174/"}}`);
         ws.onopen = () => {
             ws.send("MONITOR");
         }
@@ -275,8 +315,16 @@
 
             setTimeout(() => {
                 ws.send(JSON.stringify({"type": "startFull"}))
+
+	            setTimeout(() => {
+                    handleGameEnd();
+	            }, 5 * 60 * 1000);
             }, 30 * 1000)
         })
+    }
+
+    function handleGameEnd() {
+        ws.send(JSON.stringify({"type": "gameEnd", "winner": 1}))
     }
 
     if (location.hash === "#monitor") bootMonitor();

@@ -49,6 +49,8 @@ export class NetworkingData {
     }
 
     onServerMessage(data: any) {
+        debug(data["type"])
+
         if (data["type"] == "startGame") {
             if (Game.team == Team.LOYALIST) document.dispatchEvent(new CustomEvent("game:prepare"));
             else document.dispatchEvent(new CustomEvent("game:start"));
@@ -66,6 +68,8 @@ export class NetworkingData {
         } else if (data["type"] == "team") {
             Game.team = data["teamId"];
             debug("Received team " + Game.team)
+        } else if (data["type"] == "gameEnd") {
+            Game.handleEnd(data["winner"]);
         }
 
         if (!Game.started) return;
