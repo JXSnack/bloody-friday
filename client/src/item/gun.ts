@@ -69,6 +69,11 @@ export class Gun extends Item {
             }
 
             if (entity == null) break; // hit a wall or other geometry first — stop
+            if (entity.remoteTeam == null) return;
+            if (entity.remoteTeam == Game.team) {
+                HitConfirmOverlay.INSTANCE.doFriendlyFire();
+                return;
+            }
 
             let damage = 5 + Math.random() * 5;
             entity.damage(damage);
