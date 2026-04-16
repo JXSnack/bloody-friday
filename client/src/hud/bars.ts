@@ -32,9 +32,6 @@ export class BarsOverlay extends UIInterface {
     }
 
     private drawHealthBar(ctx: CanvasRenderingContext2D) {
-        if (!Game.self) return;
-
-        if (Game.self.isDead) return;
         if (Game.state == GameState.FLYING) {
             const boxWidth = this.hbWidth;
             const boxHeight = 50;
@@ -61,6 +58,9 @@ export class BarsOverlay extends UIInterface {
 
             return;
         }
+
+        if (!Game.self) return;
+        if (Game.self.isDead) return;
 
         // background
         ctx.beginPath();

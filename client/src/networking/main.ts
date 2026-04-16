@@ -98,7 +98,7 @@ export class NetworkingData {
     }
 
     pointsUpdate(points: number) {
-        if (!Game.self || !Game.team) {
+        if (!Game.self || Game.team == undefined) {
             debug("Couldn't send points update because self or team is null")
             return;
         }
