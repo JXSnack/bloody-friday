@@ -578,8 +578,8 @@
         const pts = window._getMonitorPoints ? window._getMonitorPoints() : { nat: 0, loy: 0 };
 
         let winner;
-        if (pts.nat > pts.loy) winner = 1;
-        else winner = 0;
+        if (pts.nat > pts.loy) winner = 0;
+        else winner = 1;
 
         ws.send(JSON.stringify({"type": "gameEnd", "winner": winner}));
 
