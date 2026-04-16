@@ -209,7 +209,7 @@ class GameInstance {
             document.querySelector("#winnerTeamName")!.innerHTML = `<span class="${teamName}">${teamName}</span>`
 
             document.querySelector("#nationalistPts")!.innerHTML = "" + this.nationalistPoints;
-            document.querySelector("#loyalistPts")!.innerHTML = "" + this.nationalistPoints;
+            document.querySelector("#loyalistPts")!.innerHTML = "" + this.loyalistPoints;
 
             document.querySelector("#endCard")!.setAttribute("style", "");
             if (Game.team == winner) document.querySelector("#won")!.setAttribute("style", "");
