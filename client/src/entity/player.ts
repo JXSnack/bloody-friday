@@ -5,6 +5,7 @@ import {PerspectiveCamera, Raycaster, Vector3} from "three";
 import {Item} from "../item/main";
 import {Gun} from "../item/gun";
 import {CarBomb} from "../item/carbomb";
+import {WaterCannon} from "../item/watercannon";
 
 const SPAWN_LOCATIONS = [
     {pos: new Vec(34.745567321777344, 0.9106167554855347, -14.461936950683594), rot: new Vec(0, -0.6239552075879722, 0)},
@@ -30,6 +31,7 @@ export class Player extends Entity {
     private currentFov: number = 50;
 
     public gun: Gun = new Gun(this);
+    public waterCannon: WaterCannon = new WaterCannon(this);
     public carBomb: CarBomb = new CarBomb(this);
 
     public activeItem: Item = this.gun;
@@ -52,6 +54,7 @@ export class Player extends Entity {
         if (Game.self == this) this.name = Game.playerName;
 
         this.gun.create();
+        this.waterCannon.create();
         this.carBomb.create();
 
         this.createMesh()
@@ -60,6 +63,7 @@ export class Player extends Entity {
     update() {
         if (!this.remote && !this.isDead) {
             if (Game.keys["Digit1"]) this.setActiveItem(this.gun.typeId);
+            else if (Game.keys["Digit2"]) this.setActiveItem(this.waterCannon.typeId);
             else if (Game.keys["Digit3"]) this.setActiveItem(this.carBomb.typeId);
         }
 
@@ -203,6 +207,7 @@ export class Player extends Entity {
         let item;
 
         if (itemId == "gun") item = this.gun;
+        else if (itemId == "water_cannon") item = this.waterCannon;
         else if (itemId == "car_bomb") item = this.carBomb;
         else {
             alert("oops");
@@ -228,12 +233,14 @@ export class Player extends Entity {
         this.mesh.visible = false;
 
         this.gun.createMesh();
+        this.waterCannon.createMesh();
         this.carBomb.createMesh();
     }
 
     removeMesh() {
         super.removeMesh();
         this.gun.removeMesh();
+        this.waterCannon.removeMesh();
         this.carBomb.removeMesh();
     }
 

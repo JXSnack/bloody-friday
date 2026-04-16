@@ -85,9 +85,10 @@ export class BarsOverlay extends UIInterface {
         if (!Game.self!.gun.isReloading) this.renderInventorySlot(ctx, active, "1", 14, this.gunSource, Game.self!.gun.ammo.toString(), "Rubber Bullet");
         else this.renderInventorySlot(ctx, active, "1", 14, this.gunSource, Game.self!.gun.ammo.toString(), "Rubber Bullet", "Reloading...");
 
-        // water/teacannon
-        active = Game.self!.activeItem.typeId == "watercannon";
-        this.renderInventorySlot(ctx, active, "2", 12 + this.itemWidth + this.itemDistance, this.waterCannonSource, "100", "100", "2500 punten")
+        // water
+        active = Game.self!.activeItem.typeId == "water_cannon";
+        if (!Game.self!.waterCannon.canShoot) this.renderInventorySlot(ctx, active, "2", 12 + this.itemWidth + this.itemDistance, this.waterCannonSource, "Water", "Knockback", "Reloading...")
+        else this.renderInventorySlot(ctx, active, "2", 12 + this.itemWidth + this.itemDistance, this.waterCannonSource, "Water", "Knockback", "2500 punten")
 
         // car bomb
         active = Game.self!.activeItem.typeId == "car_bomb";
