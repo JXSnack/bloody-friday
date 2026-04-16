@@ -3,6 +3,9 @@ import {Player} from "../entity/player";
 import {debug, Game, Vec} from "../util";
 
 export class CarBomb extends Item {
+    public canShoot: boolean = true;
+    private cooldownMs: number = 10 * 1000;
+
     constructor(owner: Player) {
         super(owner, "car_bomb");
         this.modelOffset = new Vec(-0.23, -0.3, 0);
@@ -21,6 +24,13 @@ export class CarBomb extends Item {
     }
 
     use() {
+        if (!this.canShoot) return;
+        this.canShoot = false;
+
+        setTimeout(() => {
+            this.canShoot = true;
+        }, this.cooldownMs)
+
         import("../entity/carbomb").then((cb) => {
             let entity = new cb.CarBombEntity(this.owner);
             Game.world?.addEntity(entity);
