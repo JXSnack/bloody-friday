@@ -141,7 +141,9 @@ export abstract class Entity {
     }
 
     getRot(): Vec {
-        if (Game.self!.uuid == this.uuid) {
+        if (!Game.self) return Vec.ZERO;
+
+        if (Game.self.uuid == this.uuid) {
             const dir = new Vector3();
             Game.world!.camera.getWorldDirection(dir);
             return new Vec(0, Math.atan2(dir.x, dir.z), 0)

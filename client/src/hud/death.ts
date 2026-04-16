@@ -12,8 +12,8 @@ export class DeathOverlay extends UIInterface {
     create() {}
 
     update() {
-        if (Game.keys["Enter"]) {
-            Game.self!.respawn();
+        if (Game.self && Game.keys["Enter"]) {
+            Game.self.respawn();
             return;
         }
 

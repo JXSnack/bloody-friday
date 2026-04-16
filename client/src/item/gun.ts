@@ -33,6 +33,8 @@ export class Gun extends Item {
     }
 
     use() {
+        if (!Game.self) return;
+
         if (this.lastShot + this.cooldown > Date.now()) return;
         if (this.ammo <= 0) {
             this.doReload();
@@ -42,7 +44,7 @@ export class Gun extends Item {
         this.ammo--;
         this.lastShot = Date.now();
 
-        const origin = Game.self!.getPos().withAdd(new Vec(0, 0.5, 0));
+        const origin = Game.self.getPos().withAdd(new Vec(0, 0.5, 0));
 
         const direction = new Vector3();
         Game.world!.camera.getWorldDirection(direction);
@@ -52,8 +54,8 @@ export class Gun extends Item {
         const hits = raycaster.intersectObjects(Game.world!.scene.children, true);
 
         Game.sounds.playShoot();
-        Game.networking.send(Game.self!.uuid, {"type": "someShot", "pos": Game.self!.getPos()})
-        Game.self?.applyRecoil(0.15 + Math.random() * 0.1);
+        Game.networking.send(Game.self.uuid, {"type": "someShot", "pos": Game.self.getPos()})
+        Game.self.applyRecoil(0.15 + Math.random() * 0.1);
 
         for (const hit of hits) {
             let obj: any = hit.object;

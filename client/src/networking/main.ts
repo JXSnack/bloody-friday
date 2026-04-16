@@ -98,6 +98,11 @@ export class NetworkingData {
     }
 
     pointsUpdate(points: number) {
-        this.sendDirect(Game.self!.uuid, "server", {"type": "pointsUp", "team": Game.team!, "amount": points})
+        if (!Game.self || !Game.team) {
+            debug("Couldn't send points update because self or team is null")
+            return;
+        }
+
+        this.sendDirect(Game.self.uuid, "server", {"type": "pointsUp", "team": Game.team, "amount": points})
     }
 }

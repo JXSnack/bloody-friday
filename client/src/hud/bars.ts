@@ -32,7 +32,9 @@ export class BarsOverlay extends UIInterface {
     }
 
     private drawHealthBar(ctx: CanvasRenderingContext2D) {
-        if (Game.self?.isDead) return;
+        if (!Game.self) return;
+
+        if (Game.self.isDead) return;
         if (Game.state == GameState.FLYING) {
             const boxWidth = this.hbWidth;
             const boxHeight = 50;
@@ -75,27 +77,27 @@ export class BarsOverlay extends UIInterface {
         // health bar
         ctx.beginPath();
         ctx.fillStyle = "white";
-        ctx.roundRect(12, this.hbHeight - 25 - 14, (Game.self!.health / Game.self!.maxHealth) * (this.hbWidth - 24), 25, 4);
+        ctx.roundRect(12, this.hbHeight - 25 - 14, (Game.self.health / Game.self.maxHealth) * (this.hbWidth - 24), 25, 4);
         ctx.fill();
 
         // items
 
         // gun
-        let active: boolean = Game.self!.activeItem.typeId == "gun";
-        if (!Game.self!.gun.isReloading) this.renderInventorySlot(ctx, active, "1", 14, this.gunSource, Game.self!.gun.ammo.toString(), "Rubber Bullet");
-        else this.renderInventorySlot(ctx, active, "1", 14, this.gunSource, Game.self!.gun.ammo.toString(), "Rubber Bullet", "Reloading...");
+        let active: boolean = Game.self.activeItem.typeId == "gun";
+        if (!Game.self.gun.isReloading) this.renderInventorySlot(ctx, active, "1", 14, this.gunSource, Game.self.gun.ammo.toString(), "Rubber Bullet");
+        else this.renderInventorySlot(ctx, active, "1", 14, this.gunSource, Game.self.gun.ammo.toString(), "Rubber Bullet", "Reloading...");
 
         // water
-        active = Game.self!.activeItem.typeId == "water_cannon";
-        let unlocked = Game.self!.waterCannon.isUnlocked();
-        if (!Game.self!.waterCannon.canShoot) this.renderInventorySlot(ctx, active, "2", 12 + this.itemWidth + this.itemDistance, this.waterCannonSource, "Water", "Knockback", "Reloading...")
+        active = Game.self.activeItem.typeId == "water_cannon";
+        let unlocked = Game.self.waterCannon.isUnlocked();
+        if (!Game.self.waterCannon.canShoot) this.renderInventorySlot(ctx, active, "2", 12 + this.itemWidth + this.itemDistance, this.waterCannonSource, "Water", "Knockback", "Reloading...")
         else if (!unlocked) this.renderInventorySlot(ctx, active, "2", 12 + this.itemWidth + this.itemDistance, this.waterCannonSource, "Water", "Knockback", Game.waterCannonUnlock + " punten")
         else this.renderInventorySlot(ctx, active, "2", 12 + this.itemWidth + this.itemDistance, this.waterCannonSource, "Water", "Knockback")
 
         // car bomb
-        active = Game.self!.activeItem.typeId == "car_bomb";
-        unlocked = Game.self!.carBomb.isUnlocked();
-        if (!Game.self!.carBomb.canShoot) this.renderInventorySlot(ctx, active, "3", 12 + this.itemWidth * 2 + this.itemDistance * 2, this.carBombSource, "Autobom", "Area Damage", "Reloading...");
+        active = Game.self.activeItem.typeId == "car_bomb";
+        unlocked = Game.self.carBomb.isUnlocked();
+        if (!Game.self.carBomb.canShoot) this.renderInventorySlot(ctx, active, "3", 12 + this.itemWidth * 2 + this.itemDistance * 2, this.carBombSource, "Autobom", "Area Damage", "Reloading...");
         else if (!unlocked) this.renderInventorySlot(ctx, active, "3", 12 + this.itemWidth * 2 + this.itemDistance * 2, this.carBombSource, "Autobom", "Area Damage", Game.carBombUnlock + " punten");
         else this.renderInventorySlot(ctx, active, "3", 12 + this.itemWidth * 2 + this.itemDistance * 2, this.carBombSource, "Autobom", "Area Damage");
     }

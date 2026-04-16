@@ -314,13 +314,18 @@ export class Player extends Entity {
     }
 
     damage(amount: number, cause?: string) {
+        if (!Game.self) {
+            debug("Failed to apply damage, because self is null")
+            return;
+        }
+
         if (Game.self == this) {
-            Game.self!.health -= amount;
+            Game.self.health -= amount;
             if (cause) {
                 this.lastDamage = cause;
             }
         } else {
-            Game.networking.sendDirect(Game.self!.uuid, this.uuid, {"type": "damage", "amount": amount});
+            Game.networking.sendDirect(Game.self.uuid, this.uuid, {"type": "damage", "amount": amount});
         }
     }
 

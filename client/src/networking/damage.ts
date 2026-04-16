@@ -4,7 +4,9 @@ import {KillOverlay} from "../hud/killOverlay";
 
 export function handleDamage(sender: string, data: any) {
     let damage = data["amount"];
-    Game.self?.damage(damage, sender)
+
+    if (!Game.self) return;
+    Game.self.damage(damage, sender)
     Game.sounds.playHit();
 }
 

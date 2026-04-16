@@ -62,7 +62,8 @@ export class Sounds {
     }
 
     calculateDistanceVolume(pos: Vec, range: number): number {
-        const selfPos = Game.self!.getPos();
+        if (!Game.self) return 0;
+        const selfPos = Game.self.getPos();
 
         const dx = Math.abs(pos.x - selfPos.x);
         const dy = Math.abs(pos.y - selfPos.y);

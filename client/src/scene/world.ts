@@ -73,8 +73,10 @@ export class MainScene extends Scene3D {
         document.addEventListener("click", () => {
             tryRequestFullscreen();
 
-            if (Game.self?.isDead) return;
-            if (Game.state != GameState.FLYING) Game.self?.activeItem.use();
+            if (Game.self) {
+                if (Game.self.isDead) return;
+                if (Game.state != GameState.FLYING) Game.self.activeItem.use();
+            }
         });
 
         // Feed mouse deltas to controls
@@ -96,7 +98,12 @@ export class MainScene extends Scene3D {
     }
 
     setupControls() {
-        this.controls = new FirstPersonControls(this.camera, Game.self!.mesh!, {
+        if (!Game.self || !Game.self.mesh) {
+            debug("Couldn't setup controls, because self or self mesh is null")
+            return;
+        }
+
+        this.controls = new FirstPersonControls(this.camera, Game.self.mesh, {
             pointerLock: true,
             offset: new Vec(0, -4, 0).to3()
         });
@@ -108,7 +115,7 @@ export class MainScene extends Scene3D {
         }
 
         // mouse deltas
-        if (!Game.self?.isDead) this.controls?.update(this.mouseX, this.mouseY);
+        if (Game.self && !Game.self.isDead) this.controls?.update(this.mouseX, this.mouseY);
         this.mouseX = 0;
         this.mouseY = 0;
 
@@ -117,7 +124,7 @@ export class MainScene extends Scene3D {
         }
 
         // apply eye height AFTER controls update, AFTER entity update
-        if (Game.self?.mesh) {
+        if (Game.self && Game.self.mesh) {
             const pos = Game.self.getPos();
             const recoilOffset = Game.self.recoil;
 

@@ -32,9 +32,9 @@ export class DevOverlay extends UIInterface {
             this.visible = !this.visible;
         }
 
-        if (Game.keys["AltLeft"] && Game.keys["KeyC"]) {
-            let pos = Game.self!.getPos();
-            let rot = Game.self!.getRot();
+        if (Game.self && Game.keys["AltLeft"] && Game.keys["KeyC"]) {
+            let pos = Game.self.getPos();
+            let rot = Game.self.getRot();
             navigator.clipboard.writeText(`{pos: new Vec(${pos.x}, ${pos.y}, ${pos.z}), rot: new Vec(${rot.x}, ${rot.y}, ${rot.z})}`).then(() => {
                 debug("Saved location to clipboard")
             });
@@ -51,7 +51,7 @@ export class DevOverlay extends UIInterface {
         this.sprite.setPosition(this.sprite.textureWidth / 2, this.sprite.textureHeight / 2);
 
         if (Game.self) {
-            const pTex = new FLAT.TextTexture(JSON.stringify(Game.self!.getPos()), {fontSize: 28})
+            const pTex = new FLAT.TextTexture(JSON.stringify(Game.self.getPos()), {fontSize: 28})
             this.position.setTexture(pTex);
             this.position.setScale(1);
             this.position.setPosition(window.innerWidth / 2, window.innerHeight - this.position.textureHeight - 48);
