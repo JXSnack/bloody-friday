@@ -214,6 +214,8 @@ export class Player extends Entity {
             return;
         }
 
+        if (!item.isUnlocked()) return;
+
         if (this.activeItem.model) this.activeItem.model.visible = false;
         this.activeItem = item;
     }
