@@ -9,6 +9,7 @@ export abstract class Item {
     public owner: Player;
     public model?: Group;
     public modelOffset: Vec = Vec.ZERO;
+    public modelRotset: Vec = Vec.ZERO;
 
     private isLoadingModel: boolean = false;
 
@@ -28,9 +29,9 @@ export abstract class Item {
         let rot = this.owner.getRot();
 
         if (this.model != null) {
-            this.model.rotation.x = rot.x;
-            this.model.rotation.y = rot.y;
-            this.model.rotation.z = rot.z;
+            this.model.rotation.x = rot.x + this.modelRotset.x;
+            this.model.rotation.y = rot.y + this.modelRotset.y;
+            this.model.rotation.z = rot.z + this.modelRotset.z;
         }
     }
 
