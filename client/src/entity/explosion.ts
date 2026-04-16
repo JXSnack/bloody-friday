@@ -20,7 +20,7 @@ export class Explosion extends Entity {
         this.mesh.visible = false;
 
         this.loadModel("/explosion.glb", () => {
-            this.model!.scale.set(5, 5, 5);
+            this.model!.scale.set(10, 10, 10);
         });
     }
 
