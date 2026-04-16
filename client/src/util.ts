@@ -134,17 +134,28 @@ class GameInstance {
     }
 
     private modelCachePromises: Record<string, Promise<GLTF>> = {};
+    private gltfLoader: GLTFLoader = new GLTFLoader();
 
     async getOrLoadModel(path: string): Promise<Group> {
         if (!this.modelCachePromises[path]) {
             debug("loading new model " + path);
             this.modelCachePromises[path] = new Promise((resolve, reject) => {
-                new GLTFLoader().load(path, resolve, undefined, reject);
+                this.gltfLoader.load(path, resolve, undefined, reject);
             });
         }
 
         const gltf = await this.modelCachePromises[path];
         return gltf.scene.clone();
+    }
+
+    async preloadModels() {
+        await Promise.all([
+            this.getOrLoadModel("/arena.glb"),
+            this.getOrLoadModel("/arena_collisions.glb"),
+            this.getOrLoadModel("/airplane.glb"),
+            this.getOrLoadModel("/nationalist.glb"),
+            this.getOrLoadModel("/loyalist.glb")
+        ]);
     }
 
     formattedTimeRemaining(): string {

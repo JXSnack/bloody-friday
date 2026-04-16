@@ -5,10 +5,12 @@ import {Game, tryRequestFullscreen} from "./util";
 Game.sounds.init();
 
 // @ts-ignore
-document.addEventListener("game:init", (e: CustomEvent) => {
+document.addEventListener("game:init", async (e: CustomEvent) => {
     console.log("received game:init")
     Game.playerName = e.detail.username;
     Game.networking.init();
+
+    await Game.preloadModels();
 })
 
 document.addEventListener("game:start", () => {
