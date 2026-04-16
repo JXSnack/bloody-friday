@@ -155,7 +155,11 @@ class GameInstance {
             this.getOrLoadModel("/arena_collisions.glb"),
             this.getOrLoadModel("/airplane.glb"),
             this.getOrLoadModel("/nationalist.glb"),
-            this.getOrLoadModel("/loyalist.glb")
+            this.getOrLoadModel("/loyalist.glb"),
+
+            this.getOrLoadModel("/carbomb.glb"),
+            this.getOrLoadModel("/gun.glb"),
+            this.getOrLoadModel("/cannon.glb")
         ]);
     }
 
