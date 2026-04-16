@@ -3,8 +3,6 @@ import {Player} from "../entity/player";
 import {debug, Game, Vec} from "../util";
 import {Raycaster, Vector3} from "three";
 import {HitConfirmOverlay} from "../hud/hitConfirm";
-import {Entity} from "../entity/entity";
-import {KillOverlay} from "../hud/killOverlay";
 
 export class Gun extends Item {
     private readonly cooldown: number = 400;

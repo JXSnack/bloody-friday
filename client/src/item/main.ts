@@ -47,6 +47,7 @@ export abstract class Item {
             this.model.position.set(this.modelOffset.x, this.modelOffset.y, this.modelOffset.z);
             Game.world!.add.existing(this.model);
             this.model.visible = false;
+            this.isLoadingModel = false;
             then();
         }).catch((err) => {
             debug("FAILED to load item model check console");
@@ -64,5 +65,6 @@ export abstract class Item {
     removeMesh() {
         this.owner.scene.destroy(this.model as ExtendedGroup);
         this.model?.remove();
+        this.model = undefined;
     }
 }
