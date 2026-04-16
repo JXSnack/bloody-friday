@@ -575,10 +575,14 @@
     }
 
     function handleGameEnd() {
-        const winner = 1; // change as needed
+        const pts = window._getMonitorPoints ? window._getMonitorPoints() : { nat: 0, loy: 0 };
+
+        let winner;
+        if (pts.nat > pts.loy) winner = 1;
+        else winner = 0;
+
         ws.send(JSON.stringify({"type": "gameEnd", "winner": winner}));
 
-        const pts = window._getMonitorPoints ? window._getMonitorPoints() : { nat: 0, loy: 0 };
         showMonitorEndScreen(winner, pts.nat, pts.loy);
     }
 
