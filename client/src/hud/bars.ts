@@ -144,7 +144,7 @@ export class BarsOverlay extends UIInterface {
         ctx.roundRect(0, 0, this.pbWidth, this.pbHeight, 6);
         ctx.fill();
 
-        this.renderPointBar(ctx, 0, Game.nationalistPoints, "rgb(255,12,12)", true);
+        this.renderPointBar(ctx, 0, Game.nationalistPoints, "rgb(12,255,12)", true);
         this.renderPointBar(ctx, this.pbWidth / 2, Game.loyalistPoints, "rgb(12, 12, 255)", false);
 
         // center time
