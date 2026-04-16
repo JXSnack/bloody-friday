@@ -232,7 +232,7 @@ export class BarsOverlay extends UIInterface {
         ctx.font = "18px monospace";
         ctx.fillStyle = "white";
 
-        const text = points.toString();
+        const text = (!left ? "(loyalisten)  " : "") + points.toString() + (left ? "  (nationalisten)" : "");
         const textX = left
             ? baseX + 6
             : baseX + barWidth - ctx.measureText(text).width - 6;
