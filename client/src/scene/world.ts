@@ -12,6 +12,7 @@ import {DeathOverlay} from "../hud/death";
 import {Airplane} from "../entity/airplane";
 import {FadeOverlay} from "../hud/fadeOverlay";
 import {GLTF} from "three/examples/jsm/loaders/GLTFLoader";
+import {UnlockOverlay} from "../hud/unlockOverlay";
 
 export class MainScene extends Scene3D {
     private entities: Record<string, Entity> = {};
@@ -61,7 +62,8 @@ export class MainScene extends Scene3D {
         this.addUI(HitConfirmOverlay.INSTANCE);
         this.addUI(KillOverlay.INSTANCE);
         this.addUI(new BarsOverlay());
-        this.addUI(new DeathOverlay())
+        this.addUI(UnlockOverlay.INSTANCE);
+        this.addUI(new DeathOverlay());
         this.addUI(FadeOverlay.INSTANCE);
         this.addUI(new DevOverlay());
 
