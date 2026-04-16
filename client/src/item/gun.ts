@@ -47,7 +47,7 @@ export class Gun extends Item {
         const direction = new Vector3();
         Game.world!.camera.getWorldDirection(direction);
 
-        const raycaster = new Raycaster(origin.to3(), direction.normalize());
+        const raycaster = new Raycaster(origin.to3(), direction.normalize(),  0, 30);
         const hits = raycaster.intersectObjects(Game.world!.scene.children, true);
 
         Game.sounds.playShoot();
@@ -56,23 +56,25 @@ export class Gun extends Item {
 
         for (const hit of hits) {
             let obj: any = hit.object;
+            let entity: Player | null = null;
 
-            // walk up the parent chain since the stamped mesh may be a parent
+            // walk up parent chain to find a player entity
             while (obj != null) {
                 if (obj.bloodyFridayEntity && obj.bloodyFridayEntity instanceof Player) {
-                    const entity: Player = obj.bloodyFridayEntity;
-
-                    let damage = 5 + Math.random() * 5;
-                    entity.damage(damage);
-
-                    let points = 20 + Math.round(Math.random() * 30);
-                    HitConfirmOverlay.INSTANCE.doHit(points);
-                    Game.networking.pointsUpdate(points);
-
-                    return;
+                    entity = obj.bloodyFridayEntity;
+                    break;
                 }
                 obj = obj.parent;
             }
+
+            if (entity == null) break; // hit a wall or other geometry first — stop
+
+            let damage = 5 + Math.random() * 5;
+            entity.damage(damage);
+
+            let points = 20 + Math.round(Math.random() * 30);
+            HitConfirmOverlay.INSTANCE.doHit(points);
+            Game.networking.pointsUpdate(points);
         }
 
         if (this.ammo <= 0) this.doReload();
