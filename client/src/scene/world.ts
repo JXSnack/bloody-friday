@@ -11,6 +11,7 @@ import {KillOverlay} from "../hud/killOverlay";
 import {DeathOverlay} from "../hud/death";
 import {Airplane} from "../entity/airplane";
 import {FadeOverlay} from "../hud/fadeOverlay";
+import {GLTF} from "three/examples/jsm/loaders/GLTFLoader";
 
 export class MainScene extends Scene3D {
     private entities: Record<string, Entity> = {};
@@ -33,11 +34,13 @@ export class MainScene extends Scene3D {
 
         // this.physics.add.ground({mass: 0, width: 10, height: 10});
 
-        let arenaModel = await this.load.gltf("/arena.glb");
+        // @ts-ignore
+        let arenaModel = (await Game.getOrLoadModel("/arena.glb")) as GLTF;
         arenaModel.scene.scale.set(0.5, 0.5, 0.5)
         this.add.existing(arenaModel.scene);
 
-        let arenaCollisions = await this.load.gltf("/arena_collisions.glb");
+        // @ts-ignore
+        const arenaCollisions = (await Game.getOrLoadModel("/arena_collisions.glb")) as GLTF;
         arenaCollisions.scene.scale.set(0.5, 0.5, 0.5)
 
         this.physics.add.existing(arenaCollisions.scene as ExtendedGroup, {

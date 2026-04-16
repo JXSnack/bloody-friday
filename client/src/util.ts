@@ -149,6 +149,7 @@ class GameInstance {
     }
 
     async preloadModels() {
+        console.log("Preloading models...")
         await Promise.all([
             this.getOrLoadModel("/arena.glb"),
             this.getOrLoadModel("/arena_collisions.glb"),
