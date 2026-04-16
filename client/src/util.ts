@@ -7,6 +7,7 @@ import {GLTF, GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {Entity} from "./entity/entity";
 import {AudioManager} from "@yandeu/audio";
 import {Sounds} from "./sound";
+import {UnlockOverlay} from "./hud/unlockOverlay";
 
 export enum Team {
     NATIONALIST,
@@ -181,6 +182,17 @@ class GameInstance {
     getOwnTeamPoints(): number {
         if (this.team == undefined) return 0;
         return this.team == Team.LOYALIST ? this.loyalistPoints : this.nationalistPoints;
+    }
+
+    checkUnlocks(before: number, after: number, team: Team) {
+        let teamStr = team == Team.LOYALIST ? "Loyalisten" : "Nationalisten";
+        let teamCol = team == Team.LOYALIST ? 0x0cff0c : 0xff0c0c;
+
+        if (before < this.carBombUnlock && after >= this.carBombUnlock) {
+            UnlockOverlay.INSTANCE.doMessage(`${teamStr} hebben nu autobommen!`, teamCol);
+        } else if (before < this.waterCannonUnlock && after >= this.waterCannonUnlock) {
+            UnlockOverlay.INSTANCE.doMessage(`${teamStr} hebben nu waterkanonnen!`, teamCol);
+        }
     }
 }
 

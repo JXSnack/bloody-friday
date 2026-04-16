@@ -73,8 +73,14 @@ export class NetworkingData {
         if (data["type"] == "disconnect") {
             Game.world?.removeEntity(data["uuid"]);
         } else if (data["type"] == "pointsUpdate") {
+            const beforeNationalist = Game.nationalistPoints;
+            const beforeLoyalist = Game.loyalistPoints;
+
             Game.nationalistPoints = data["nationalist"];
             Game.loyalistPoints = data["loyalist"];
+
+            Game.checkUnlocks(beforeNationalist, Game.nationalistPoints, Team.NATIONALIST);
+            Game.checkUnlocks(beforeLoyalist, Game.loyalistPoints, Team.LOYALIST)
         }
     }
 
