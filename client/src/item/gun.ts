@@ -80,6 +80,10 @@ export class Gun extends Item {
         if (this.ammo <= 0) this.doReload();
     }
 
+    isUnlocked(): boolean {
+        return true;
+    }
+
     private doReload() {
         Game.sounds.playReload();
 
