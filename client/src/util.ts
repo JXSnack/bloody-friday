@@ -119,6 +119,8 @@ class GameInstance {
 
     public waterCannonUnlock: number = 2500;
     public carBombUnlock: number = 5000;
+    public prepTime: number = 30 * 1000;
+    public fightTime: number = 5 * 60 * 1000;
 
     doUpdate() {
         if (this.self == null) return;
@@ -169,7 +171,7 @@ class GameInstance {
 
     formattedTimeRemaining(): string {
         const elapsed = Date.now() - this.timeSinceStarted;
-        const remaining = Math.max(0, (Game.state == GameState.PREPARING ? (30 * 1000) : (8 * 60 * 1000)) - elapsed);
+        const remaining = Math.max(0, (Game.state == GameState.PREPARING ? Game.prepTime : Game.fightTime) - elapsed);
 
         const minutes = Math.floor(remaining / 60000);
         const seconds = Math.floor((remaining % 60000) / 1000);
