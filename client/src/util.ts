@@ -189,7 +189,7 @@ class GameInstance {
 
     checkUnlocks(before: number, after: number, team: Team) {
         let teamStr = team == Team.LOYALIST ? "Loyalisten" : "Nationalisten";
-        let teamCol = team == Team.LOYALIST ? 0x0cff0c : 0xff0c0c;
+        let teamCol = team == Team.LOYALIST ? 0x0c0cff : 0x0cff0c;
 
         if (before < this.carBombUnlock && after >= this.carBombUnlock) {
             UnlockOverlay.INSTANCE.doMessage(`${teamStr} hebben nu autobommen!`, teamCol);
