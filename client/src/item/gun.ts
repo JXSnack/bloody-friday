@@ -48,6 +48,7 @@ export class Gun extends Item {
         Game.world!.camera.getWorldDirection(direction);
 
         const raycaster = new Raycaster(origin.to3(), direction.normalize(),  0, 30);
+        raycaster.camera = Game.world?.camera!
         const hits = raycaster.intersectObjects(Game.world!.scene.children, true);
 
         Game.sounds.playShoot();

@@ -1,7 +1,7 @@
 import {Entity} from "./entity";
-import {FirstPersonControls, Scene3D} from "enable3d";
+import {Scene3D} from "enable3d";
 import {debug, Game, Team, Vec} from "../util";
-import {PerspectiveCamera, Raycaster, Vector3} from "three";
+import {CanvasTexture, PerspectiveCamera, Raycaster, Sprite, SpriteMaterial, Vector3} from "three";
 import {Item} from "../item/main";
 import {Gun} from "../item/gun";
 import {CarBomb} from "../item/carbomb";
@@ -23,6 +23,8 @@ const SPAWN_LOCATIONS = [
 
 export class Player extends Entity {
     public name: string = "NO U-NAME ASSIGNED";
+    public nameTag?: Sprite;
+    public remoteTeam?: Team;
 
     public health: number = 20;
     public maxHealth: number = 20;
@@ -50,6 +52,45 @@ export class Player extends Entity {
         this.targetPos = spawnPos;
     }
 
+    createNameTag(text: string): Sprite {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d")!;
+
+        const FONT = "28px Arial";
+        const HEIGHT = 64;
+
+        // Measure with a fixed font BEFORE setting canvas size
+        ctx.font = FONT;
+        const textWidth = ctx.measureText(text).width;
+
+        // Set dimensions (this resets the context state)
+        canvas.width = textWidth + 24;
+        canvas.height = HEIGHT;
+
+        // Re-apply font AFTER resize
+        ctx.font = FONT;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        ctx.fillStyle = "rgba(0,0,0,0.5)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = this.remoteTeam === Team.LOYALIST ? "#0c0cff" : "#0ac90a";
+        ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+        const texture = new CanvasTexture(canvas);
+        const material = new SpriteMaterial({ map: texture, transparent: true });
+
+        const sprite = new Sprite(material);
+
+        // Scale sprite to match canvas aspect ratio
+        const aspect = canvas.width / canvas.height;
+        sprite.scale.set(aspect * 0.6, 0.6, 1);
+        sprite.userData.ignoreRaycast = true;
+
+        return sprite;
+    }
+
     create() {
         if (Game.self == this) this.name = Game.playerName;
 
@@ -61,6 +102,18 @@ export class Player extends Entity {
     }
 
     update() {
+        if (this.nameTag && this.model) {
+            const pos = this.getPos();
+            this.nameTag.position.set(
+                pos.x,
+                pos.y + 1, // above head
+                pos.z
+            );
+
+            // always face camera
+            this.nameTag.quaternion.copy(Game.world!.camera.quaternion);
+        }
+
         if (!this.remote && !this.isDead) {
             if (Game.keys["Digit1"]) this.setActiveItem(this.gun.typeId);
             else if (Game.keys["Digit2"]) this.setActiveItem(this.waterCannon.typeId);
@@ -181,6 +234,7 @@ export class Player extends Entity {
             new Vector3(pos.x, footY + 0.1, pos.z),
             new Vector3(nx, 0, nz)
         );
+        forwardRay.camera = Game.world?.camera!;
         const forwardHits = forwardRay.intersectObjects(Game.world!.scene.children, true)
             .filter(h => !h.object.userData.bloodyFridayEntity); // ignore other players
 
@@ -191,6 +245,7 @@ export class Player extends Entity {
             new Vector3(pos.x + nx * 0.5, footY + MAX_STEP + 0.1, pos.z + nz * 0.5),
             new Vector3(0, -1, 0)
         );
+        downRay.camera = Game.world?.camera!;
         const downHits = downRay.intersectObjects(Game.world!.scene.children, true)
             .filter(h => !h.object.userData.bloodyFridayEntity);
 
@@ -244,6 +299,13 @@ export class Player extends Entity {
         this.gun.removeMesh();
         this.waterCannon.removeMesh();
         this.carBomb.removeMesh();
+
+        if (this.nameTag) {
+            this.nameTag.parent?.remove(this.nameTag);
+            this.nameTag.material.map?.dispose();
+            this.nameTag.material.dispose();
+            this.nameTag = undefined;
+        }
     }
 
     applyRecoil(amount: number) {
@@ -308,6 +370,7 @@ export class Player extends Entity {
         let datTeam: Team = data["team"];
         if (datTeam != undefined && this.model == undefined && !this.isLoadingModel) {
             debug("setting model for " + sender);
+            this.remoteTeam = datTeam;
             this.modelOffset = new Vec(0, -1, 0);
 
             this.loadModel(datTeam == Team.LOYALIST ? "/loyalist.glb" : "/nationalist.glb", () => {
@@ -316,6 +379,9 @@ export class Player extends Entity {
                 if (Game.self == this) {
                     this.model!.visible = false;
                 }
+
+                this.nameTag = this.createNameTag(this.name);
+                this.scene.add.existing(this.nameTag);
             });
         }
 
