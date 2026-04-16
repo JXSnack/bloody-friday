@@ -3,6 +3,7 @@ import {debug, Game, Vec} from "../util";
 import {Player} from "./player";
 import {handleExplosion} from "../networking/damage";
 import {Vector3} from "three";
+import {Explosion} from "./explosion";
 
 export class CarBombEntity extends Entity {
     private owner: Entity;
@@ -84,6 +85,8 @@ export class CarBombEntity extends Entity {
 
         Game.networking.send(this.uuid, data);
         handleExplosion(this.uuid, data);
+
+        Game.world!.addEntity(new Explosion(pos, this.scene));
     }
 
     makePacket(): any {
