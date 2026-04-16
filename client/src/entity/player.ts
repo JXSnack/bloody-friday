@@ -351,7 +351,10 @@ export class Player extends Entity {
         this.health = this.maxHealth;
         this.setPos(this.findSpawnPos());
 
-        if (!this.remote) this.createMesh();
+        if (!this.remote) {
+            this.createMesh();
+            this.initMeshStuff();
+        }
     }
 
     makePacket(): any {
