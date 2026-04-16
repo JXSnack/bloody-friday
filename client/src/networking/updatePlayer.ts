@@ -2,7 +2,7 @@ import {Game, GameState, Team} from "../util";
 import {Player} from "../entity/player";
 
 export async function updatePlayer(sender: string, data: any) {
-    if (Game.world == null) return;
+    if (!Game.world) return;
 
     let rawEntity = Game.world.getEntity(sender);
 
@@ -56,12 +56,17 @@ export function handleRespawn(sender: string, data: any) {
 }
 
 export async function handleLoyalistsSpawn(data: any) {
-    if (Game.team == Team.NATIONALIST) {
-        Game.state = GameState.FIGHTING;
-        Game.timeSinceStarted = Date.now();
-        const {Airplane} = await import("../entity/airplane")
-        Game.world!.addEntity(new Airplane())
-    } else {
-        Game.state = GameState.FLYING;
-    }
+    let waiter = setInterval(async () => {
+        if (!Game.world) return;
+        clearInterval(waiter);
+
+        if (Game.team == Team.NATIONALIST) {
+            Game.state = GameState.FIGHTING;
+            Game.timeSinceStarted = Date.now();
+            const {Airplane} = await import("../entity/airplane")
+            Game.world!.addEntity(new Airplane())
+        } else {
+            Game.state = GameState.FLYING;
+        }
+    }, 400)
 }
