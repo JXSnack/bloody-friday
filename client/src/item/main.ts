@@ -55,6 +55,10 @@ export abstract class Item {
         });
     }
 
+    isUnlocked(): boolean {
+        return false;
+    }
+
     createMesh() {}
 
     removeMesh() {

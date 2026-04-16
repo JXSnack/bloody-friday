@@ -87,12 +87,17 @@ export class BarsOverlay extends UIInterface {
 
         // water
         active = Game.self!.activeItem.typeId == "water_cannon";
+        let unlocked = Game.self!.waterCannon.isUnlocked();
         if (!Game.self!.waterCannon.canShoot) this.renderInventorySlot(ctx, active, "2", 12 + this.itemWidth + this.itemDistance, this.waterCannonSource, "Water", "Knockback", "Reloading...")
-        else this.renderInventorySlot(ctx, active, "2", 12 + this.itemWidth + this.itemDistance, this.waterCannonSource, "Water", "Knockback", "2500 punten")
+        else if (!unlocked) this.renderInventorySlot(ctx, active, "2", 12 + this.itemWidth + this.itemDistance, this.waterCannonSource, "Water", "Knockback", Game.waterCannonUnlock + " punten")
+        else this.renderInventorySlot(ctx, active, "2", 12 + this.itemWidth + this.itemDistance, this.waterCannonSource, "Water", "Knockback")
 
         // car bomb
         active = Game.self!.activeItem.typeId == "car_bomb";
-        this.renderInventorySlot(ctx, active, "3", 12 + this.itemWidth * 2 + this.itemDistance * 2, this.carBombSource, "Autobom", "Area Damage", "5000 punten");
+        unlocked = Game.self!.carBomb.isUnlocked();
+        if (!Game.self!.carBomb.canShoot) this.renderInventorySlot(ctx, active, "3", 12 + this.itemWidth * 2 + this.itemDistance * 2, this.carBombSource, "Autobom", "Area Damage", "Reloading...");
+        else if (!unlocked) this.renderInventorySlot(ctx, active, "3", 12 + this.itemWidth * 2 + this.itemDistance * 2, this.carBombSource, "Autobom", "Area Damage", Game.carBombUnlock + " punten");
+        else this.renderInventorySlot(ctx, active, "3", 12 + this.itemWidth * 2 + this.itemDistance * 2, this.carBombSource, "Autobom", "Area Damage");
     }
 
     private renderInventorySlot(ctx: CanvasRenderingContext2D, active: boolean, number: string, x: number, icon: HTMLImageElement, bigText: string, smallText: string, overlay?: string) {

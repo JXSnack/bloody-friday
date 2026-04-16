@@ -26,4 +26,8 @@ export class CarBomb extends Item {
             Game.world?.addEntity(entity);
         })
     }
+
+    isUnlocked(): boolean {
+        return Game.getOwnTeamPoints() >= Game.carBombUnlock;
+    }
 }

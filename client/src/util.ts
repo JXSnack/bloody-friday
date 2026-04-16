@@ -116,6 +116,9 @@ class GameInstance {
     public nationalistPoints: number = 0;
     public team?: Team;
 
+    public waterCannonUnlock: number = 2500;
+    public carBombUnlock: number = 5000;
+
     doUpdate() {
         if (this.self == null) return;
         this.self.broadcast();
@@ -173,6 +176,11 @@ class GameInstance {
         return String(minutes).padStart(2, "0") +
             ":" +
             String(seconds).padStart(2, "0");
+    }
+
+    getOwnTeamPoints(): number {
+        if (this.team == undefined) return 0;
+        return this.team == Team.LOYALIST ? this.loyalistPoints : this.nationalistPoints;
     }
 }
 

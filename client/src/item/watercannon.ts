@@ -55,4 +55,8 @@ export class WaterCannon extends Item {
             this.canShoot = true;
         }, this.cooldownMs)
     }
+
+    isUnlocked(): boolean {
+        return Game.getOwnTeamPoints() >= Game.waterCannonUnlock;
+    }
 }
