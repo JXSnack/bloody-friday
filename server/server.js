@@ -139,6 +139,8 @@ function handleMonitor(ws) {
             broadcast({"sender": "server", "type": "startLoyalists"})
         } else if (msg.type === "kick") {
             direct(msg.uuid, {"sender": "server", "type": "kick"});
+        } else if (msg.type === "gameEnd") {
+            broadcast({"sender": "server", "type": "gameEnd", "winner": msg.winner})
         }
     })
     
